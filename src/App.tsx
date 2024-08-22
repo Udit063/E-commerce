@@ -1,7 +1,7 @@
-import AuthWrapper from "./components/auth/AuthWrapper";
+import { Login } from "./components/auth/Login";
 
 function App() {
-  return <AuthWrapper />;
+  return <Login />;
 }
 
 export default App;
