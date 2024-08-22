@@ -1,10 +1,8 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AuthWrapper } from "./AuthWrapper";
-import { Button } from "../../../@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,8 +11,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../@/components/ui/form";
-import { Input } from "../../../@/components/ui/input";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -44,7 +42,7 @@ export function Login() {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Enter field" {...field} />
                 </FormControl>
                 <FormDescription>
                   This is your public display name.
@@ -53,7 +51,7 @@ export function Login() {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button className="w-full" type="submit">Submit</Button>
         </form>
       </Form>
     </AuthWrapper>

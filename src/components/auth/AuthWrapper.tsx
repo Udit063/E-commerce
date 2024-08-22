@@ -5,10 +5,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../@/components/ui/card";
-import { Button } from "../../../@/components/ui/button";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
-export function AuthWrapper({ children }) {
+export function AuthWrapper({ children }: { children: React.ReactNode }) {
   return (
     <Card className="w-[350px]">
       <CardHeader>
