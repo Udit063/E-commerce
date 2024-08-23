@@ -5,20 +5,25 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../@/components/ui/card";
-import { Button } from "../../../@/components/ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 
-export function AuthWrapper({ children }) {
+export function AuthWrapper({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
+      <CardHeader className="text-center text-semibold">
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>{children}</CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
+        <Button className="w-full" variant="outline">
+          Cancel
+        </Button>
       </CardFooter>
     </Card>
   );
