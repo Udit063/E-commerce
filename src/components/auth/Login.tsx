@@ -31,9 +31,13 @@ export function Login() {
     console.log(values);
   }
   return (
-    <AuthWrapper title="Welcome Back">
+    <AuthWrapper
+      title="Welcome Back"
+      linkHref="/register"
+      buttonLabel="New user? Create an account"
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="email"
@@ -41,7 +45,12 @@ export function Login() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="abc@gmail.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="abc@gmail.com"
+                    className="bg-transparent border-gray-600"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -54,14 +63,19 @@ export function Login() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="*****" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="*****"
+                    className="bg-transparent border-gray-600"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button className="w-full" type="submit">
-            Login
+            Sign In
           </Button>
         </form>
       </Form>
