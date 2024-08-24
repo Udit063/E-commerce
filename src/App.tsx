@@ -1,3 +1,4 @@
+import { Home } from "lucide-react";
 import { Login } from "./components/auth/Login";
 import { SignUp } from "./components/auth/SignUp";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
@@ -9,6 +10,7 @@ function App() {
     >
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
         </Routes>

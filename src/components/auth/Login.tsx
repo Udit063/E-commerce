@@ -12,6 +12,8 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { account } from "../../appwrite/appwriteConfig";
+import { useNavigate } from "react-router-dom";
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -20,6 +22,8 @@ const LoginSchema = z.object({
   }),
 });
 export function Login() {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -27,8 +31,14 @@ export function Login() {
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof LoginSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof LoginSchema>) {
+    try {
+      await account.createEmailPasswordSession(values.email, values.password);
+      navigate("/");
+      console.log(values);
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <AuthWrapper

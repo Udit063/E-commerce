@@ -12,6 +12,9 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { account } from "../../appwrite/appwriteConfig";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const SignUpSchema = z.object({
   name: z.string().min(2, { message: "Name should be more than 2 characters" }),
@@ -21,6 +24,7 @@ const SignUpSchema = z.object({
   }),
 });
 export function SignUp() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -30,6 +34,22 @@ export function SignUp() {
     },
   });
   function onSubmit(values: z.infer<typeof SignUpSchema>) {
+    const promise = account.create(
+      uuidv4(),
+      values.email,
+      values.password,
+      values.name
+    );
+
+    promise.then(
+      function (response) {
+        console.log(response);
+        navigate("/");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
     console.log(values);
   }
   return (
