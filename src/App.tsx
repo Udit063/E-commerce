@@ -1,21 +1,20 @@
-import { Home } from "lucide-react";
-import { Login } from "./components/auth/Login";
-import { SignUp } from "./components/auth/SignUp";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import SignUp from "./pages/register/SignUp";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 
 function App() {
+  const isAuth = window.location.pathname;
+  console.log(isAuth);
+
   return (
-    <div
-      className={`flex w-full min-h-screen h-full justify-center items-center  bg-[url('/src/assets/background.jpeg')] bg-no-repeat bg-cover`}
-    >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<SignUp />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<SignUp />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

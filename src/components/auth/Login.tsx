@@ -21,7 +21,7 @@ const LoginSchema = z.object({
     message: "Password must be atleast 4 characters",
   }),
 });
-export function Login() {
+export function LoginForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof LoginSchema>>({

@@ -23,7 +23,7 @@ const SignUpSchema = z.object({
     message: "Password must be atleast 4 characters",
   }),
 });
-export function SignUp() {
+export function SignUpForm() {
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
