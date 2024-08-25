@@ -1,3 +1,4 @@
+import Products from "@/components/products/Products";
 import Navbar from "../../components/navbar/navbar";
 
 function Home() {
@@ -5,7 +6,7 @@ function Home() {
     <div>
       <Navbar />
       <div className="text-3xl font-semibold flex items-center justify-center">
-        home
+        <Products />
       </div>
     </div>
   );
