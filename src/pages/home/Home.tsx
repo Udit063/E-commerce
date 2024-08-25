@@ -5,9 +5,7 @@ function Home() {
   return (
     <div>
       <Navbar />
-      <div className="text-3xl font-semibold flex items-center justify-center">
-        <Products />
-      </div>
+      <Products />
     </div>
   );
 }
