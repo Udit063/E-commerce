@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../navbar/navbar";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../ui/card";
-import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { databases } from "@/appwrite/appwriteConfig";
-import { error, log } from "console";
+import cart from "@/assets/trolley.png";
 
 function ProductDetails() {
   const id = useParams();
-  const [product, setProduct] = useState();
+  const [product, setProduct] = useState([]);
 
   useEffect(() => {
     console.log(id.id);
@@ -41,46 +32,49 @@ function ProductDetails() {
   useEffect(() => {
     console.log(product);
   });
+  const originalPrice = product.price + Math.floor(product.price * 0.8);
 
   return (
     <div>
       <Navbar />
       {product ? (
-        <Card className="px-3 shadow-xl border border-slate-600 outline-0 backdrop-blur-sm bg-white/30">
-          <CardContent className="w-full h-60 flex justify-center items-center p-3">
+        <div className="px-[10%] flex py-8">
+          <div className="w-[50%] p-4 flex items-center justify-center">
             <img
               src={product.image}
               alt=""
-              width={100}
-              height={100}
-              className="w-full h-full object-fit"
+              className="w-10/12 border border-gray-300 rounded-md"
             />
-          </CardContent>
-          <CardHeader className="pt-0 pb-2 px-3 space-y-0">
-            <CardTitle className="text-xl text-left font-semibold truncate">
-              {product.title}
-            </CardTitle>
-            <CardDescription className="pt-0 m-0">
-              <p className="text-justify p-0 m-0 line-clamp-2">
+          </div>
+          <div className="w-[50%] flex justify-start items-center">
+            <div className="w-11/12 flex flex-col items-start justify-center">
+              <div className="text-4xl text-justify font-semibold">
+                {product.title}
+              </div>
+              <div className="text-sm text-justify text-gray-700 pt-1">
                 {product.description}
-              </p>
-            </CardDescription>
-            <CardDescription className="text-gray-700 text-md pt-4">
-              Rs. {product.price}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex justify-between px-3 pb-3">
-            <Link
-              to="/"
-              className="w-full text-center flex justify-center items-center p-1.5 gap-2 text-lg bg-gray-200 rounded-md"
-            >
-              <img src="" alt="" className="w-[20px]" />
-              <p>Add to Cart</p>
-            </Link>
-          </CardFooter>
-        </Card>
+              </div>
+              <div className="text-black text-left font-semibold text-2xl pt-4">
+                <span>Rs. {product.price}</span>
+                <span className="line-through px-3 text-base">
+                  Rs. {originalPrice}
+                </span>
+                <span className="text-green-600 text-xl ">
+                  {Math.floor(
+                    ((originalPrice - product.price) * 100) / originalPrice
+                  )}
+                  % off
+                </span>
+              </div>
+              <div className="w-full text-center flex justify-center mt-6 items-center p-1.5 gap-2 bottom-0 text-lg bg-gray-200 rounded-md">
+                <img src={cart} alt="" className="w-[20px]" />
+                <p>Add to Cart</p>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
-        <p>Loading...</p> // Fallback content while product is loading
+        <p>Loading...</p>
       )}
     </div>
   );

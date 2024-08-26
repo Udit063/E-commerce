@@ -33,7 +33,7 @@ const Products = () => {
           <div key={product.$id}>
             <ProductCard
               key={product.$id}
-              ID={product.$id}
+              productID={product.$id}
               title={product.title}
               description={product.description}
               price={product.price}

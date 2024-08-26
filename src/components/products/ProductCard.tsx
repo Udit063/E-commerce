@@ -9,17 +9,17 @@ import {
 import { Link } from "react-router-dom";
 import cart from "@/assets/trolley.png";
 
-function ProductCard({ ID, title, description, price, image }) {
+function ProductCard({ productID, title, description, price, image }) {
   return (
     <Card className="px-3 shadow-xl border border-slate-600 outline-0 backdrop-blur-sm bg-white/30">
-      <Link to={`/products/${ID}`}>
+      <Link to={`/products/${productID}`}>
         <CardContent className="w-full h-60 flex justify-center items-center p-3">
           <img
             src={image}
             alt=""
             width={100}
             height={100}
-            className="w-full h-full object-fit"
+            className="w-full h-full object-fit hover:scale-110 transition ease-in-out duration-300 hover:opacity-90"
           />
         </CardContent>
         <CardHeader className="pt-0 pb-2 px-3 space-y-0">
@@ -30,7 +30,10 @@ function ProductCard({ ID, title, description, price, image }) {
             <p className="text-justify p-0 m-0 line-clamp-2">{description}</p>
           </CardDescription>
           <CardDescription className="text-gray-700 text-md pt-4">
-            Rs. {price}
+            <span>Rs. {price}</span>
+            <span className="line-through px-2">
+              Rs. {price + Math.floor(price * 0.8)}
+            </span>
           </CardDescription>
         </CardHeader>
       </Link>
