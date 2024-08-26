@@ -23,45 +23,20 @@ const Products = () => {
     );
     setLoader(false);
   }, []);
-  //   useEffect(() => {
-  //     fetch("https://fakestoreapi.in/api/products")
-  //       .then((res) => {
-  //         if (!res.ok) {
-  //           throw new Error("Network response was not ok");
-  //         }
-  //         return res.json();
-  //       })
-  //       .then((json) => {
-  //         setProducts(json);
-  //         console.log(json);
-
-  //         setLoading(false);
-  //       })
-  //       .catch((err) => {
-  //         setError(err.message);
-  //         console.error(err.message);
-  //         setLoading(false);
-  //       });
-  //   }, []);
-
-  //   useEffect(() => {
-  //     if (products.length > 0) {
-  //       console.log("Products updated:", products.products);
-  //     }
-  //   }, [products]);
 
   if (loader) return <p>Loading...</p>;
 
   return (
-    <div className="grid grid-cols-4 w-full h-full justify-center gap-8">
+    <div className="px-[10%] py-10 grid grid-cols-4 p-4 justify-center gap-8">
       {products &&
         products.map((product) => (
           <div key={product.$id}>
             <ProductCard
               key={product.$id}
+              ID={product.$id}
               title={product.title}
               description={product.description}
-              price={product.price * 50}
+              price={product.price}
               image={product.image}
             />
           </div>

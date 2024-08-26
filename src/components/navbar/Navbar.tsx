@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <div className="w-full p-2 flex justify-center border border-gray-200 shadow-xl">
+    <div className="w-full p-2 flex justify-center border border-gray-200">
       <div className="w-[80%] flex items-center justify-between">
         <div className="flex gap-12">
           <div className="flex cursor-pointer">
