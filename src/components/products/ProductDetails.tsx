@@ -1,33 +1,10 @@
-import { useEffect, useState } from "react";
 import Navbar from "../navbar/navbar";
-import { useParams } from "react-router-dom";
-import { databases } from "@/appwrite/appwriteConfig";
 import AddToCart from "../buttons/AddToCart";
+import { useLocation } from "react-router-dom";
 
 function ProductDetails() {
-  const id = useParams();
-  const [product, setProduct] = useState([]);
-
-  useEffect(() => {
-    console.log(id.id);
-    const getProduct = async () => {
-      try {
-        const response = await databases.getDocument(
-          "66c90328001a42e8785f",
-          "66c9034d001c90533fed",
-          id.id
-        );
-        setProduct(response);
-        console.log(product);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (id.id) {
-      getProduct();
-    }
-  }, [id.id]);
+  const location = useLocation();
+  const { product } = location.state || {};
   const originalPrice = product.price + Math.floor(product.price * 0.8);
 
   return (
@@ -61,7 +38,7 @@ function ProductDetails() {
                 </span>
               </div>
               <div className="w-full text-center flex justify-center mt-6 items-center bottom-0 text-lg rounded-md">
-                <AddToCart />
+                <AddToCart product={product} />
               </div>
             </div>
           </div>

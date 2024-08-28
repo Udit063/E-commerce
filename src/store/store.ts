@@ -3,18 +3,34 @@ import create from "zustand";
 const useProductStore = create((set) => ({
   products: [],
   addProduct: (product) =>
-    set((state) => ({ products: [...state.products, product] })),
-  removeProduct: (id) =>
-    set((state) => ({
-      products: state.products.filter((product) => product.id !== id),
+    set((state) => {
+      const existingProduct: state.products.find(p => p.id == product.id);
+      if(!existingProduct){
+        return {products: [...state.products, {...product, quantity:1}]}
+      }
+    }),
+
+    increaseQuantity: (id) => set((state) => ({
+        products: state.products.map(product => {
+            product.id == id ? {...product, quantity: product.quantity+1} : product
+        }),
     })),
-  updateProduct: (updatedProduct) =>
-    set((state) => ({
-      products: state.products.map((product) =>
-        product.id === updatedProduct.id ? updatedProduct : product
-      ),
+
+    decreaseQuantity: (id) => set((state) =>({
+        products: state.products.map(product => {
+            if(product.id == id){
+                if(product.quantity > 1){
+                    return [{...product, quantity: product.quantity - 1}]
+                } else{
+                    return []
+                }
+            }
+        })
     })),
-  clearProducts: () => set({ products: [] }),
+
+    removeProduct: (id) => set((state) =>({
+        products: state.product.filter(product => product.id !== id),
+    })),
 }));
 
 export default useProductStore;

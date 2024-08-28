@@ -31,14 +31,7 @@ const Products = () => {
       {products &&
         products.map((product) => (
           <div key={product.$id}>
-            <ProductCard
-              key={product.$id}
-              productID={product.$id}
-              title={product.title}
-              description={product.description}
-              price={product.price}
-              image={product.image}
-            />
+            <ProductCard product={product} />
           </div>
         ))}
     </div>
