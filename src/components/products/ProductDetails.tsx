@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../navbar/navbar";
 import { useParams } from "react-router-dom";
 import { databases } from "@/appwrite/appwriteConfig";
-import cart from "@/assets/trolley.png";
+import AddToCart from "../buttons/AddToCart";
 
 function ProductDetails() {
   const id = useParams();
@@ -28,10 +28,6 @@ function ProductDetails() {
       getProduct();
     }
   }, [id.id]);
-
-  useEffect(() => {
-    console.log(product);
-  });
   const originalPrice = product.price + Math.floor(product.price * 0.8);
 
   return (
@@ -48,9 +44,7 @@ function ProductDetails() {
           </div>
           <div className="w-[50%] flex justify-start items-center">
             <div className="w-11/12 flex flex-col items-start justify-center">
-              <div className="text-4xl text-justify font-semibold">
-                {product.title}
-              </div>
+              <div className="text-4xl font-semibold">{product.title}</div>
               <div className="text-sm text-justify text-gray-700 pt-1">
                 {product.description}
               </div>
@@ -66,9 +60,8 @@ function ProductDetails() {
                   % off
                 </span>
               </div>
-              <div className="w-full text-center flex justify-center mt-6 items-center p-1.5 gap-2 bottom-0 text-lg bg-gray-200 rounded-md">
-                <img src={cart} alt="" className="w-[20px]" />
-                <p>Add to Cart</p>
+              <div className="w-full text-center flex justify-center mt-6 items-center bottom-0 text-lg rounded-md">
+                <AddToCart />
               </div>
             </div>
           </div>

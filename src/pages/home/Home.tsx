@@ -4,7 +4,10 @@ import Navbar from "../../components/navbar/navbar";
 function Home() {
   return (
     <div>
-      <Navbar />
+      <div className="sticky w-full top-0 z-30">
+        <Navbar />
+      </div>
+
       <Products />
     </div>
   );
