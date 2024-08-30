@@ -30,6 +30,7 @@ export function CartItems() {
           <TableHead className="w-[100px]">Image</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Quantity</TableHead>
+          <TableHead className="text-right">Price per Item</TableHead>
           <TableHead className="text-right">Price</TableHead>
         </TableRow>
       </TableHeader>
@@ -50,23 +51,24 @@ export function CartItems() {
               <Button
                 variant="outline"
                 onClick={() => decreaseQuantity(product.$id)}
-                className="ml-1 md:ml-0 mr-1 sm:mr-2 px-2 py-1 text-sm sm:px-3 sm:py-2 sm:text-base"
+                className="ml-1 mr-0 md:ml-0 sm:mr-2 px-2 py-1 text-sm sm:px-3 sm:py-2 sm:text-base"
               >
                 -
               </Button>
-              <p className="border border-input px-2 py-1 text-sm sm:px-3 sm:py-2 sm:text-base rounded-md ">
+              <p className="m-0 border border-input px-1 py-1 text-sm sm:px-3 sm:py-2 sm:text-base rounded-md ">
                 {product.quantity}
               </p>
               <Button
                 variant="outline"
                 onClick={() => increaseQuantity(product.$id)}
-                className="ml-1 sm:ml-2 px-2 py-1 text-sm sm:px-3 sm:py-2 sm:text-base"
+                className="ml-0 sm:ml-2 px-2 py-1 text-sm sm:px-3 sm:py-2 sm:text-base"
               >
                 +
               </Button>
             </TableCell>
+            <TableCell className="text-right">₹{product.price}</TableCell>
             <TableCell className="text-right">
-              ${product.price * product.quantity}
+              ₹{product.price * product.quantity}
             </TableCell>
           </TableRow>
         ))}

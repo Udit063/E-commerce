@@ -1,4 +1,26 @@
+import useProductStore from "@/store/store";
+
 function OrderSummary() {
+  const products = useProductStore((state) => state.products);
+
+  const totalQuantity = products.reduce(
+    (sum, product) => sum + product.quantity,
+    0
+  );
+  const totalPrice = products.reduce(
+    (amount, product) => amount + product.price * product.quantity,
+    0
+  );
+
+  const totalAmount = Math.floor(totalPrice - totalPrice * 0.15);
+
+  const originalPrice = products.reduce(
+    (amount, product) =>
+      (amount + product.price + Math.floor(product.price * 0.8)) *
+      product.quantity,
+    0
+  );
+
   return (
     <div>
       <div className="mt-0 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
@@ -7,13 +29,17 @@ function OrderSummary() {
         </h2>
         <div className="mt-6 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">Price (2 Items)</div>
-            <div className="text-sm font-medium text-gray-900">₹5499.00</div>
+            <div className="text-sm text-gray-600">
+              Price ({totalQuantity} Items)
+            </div>
+            <div className="text-sm font-medium text-gray-900">
+              ₹{totalPrice}.00
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">Discount</div>
             <div className="text-sm font-medium text-green-600/80">
-              - ₹1669.00
+              - ₹{originalPrice - totalPrice}.00
             </div>
           </div>
           <div className="flex items-center justify-between">
@@ -39,7 +65,9 @@ function OrderSummary() {
             <dt className="text-base font-medium text-gray-900">
               Total Amount
             </dt>{" "}
-            <dd className="text-base font-semibold text-gray-900">₹3447</dd>
+            <dd className="text-base font-semibold text-gray-900">
+              ₹{totalAmount}.00
+            </dd>
           </div>
         </div>
         <div className="mt-6">
@@ -52,7 +80,7 @@ function OrderSummary() {
         </div>
         <div className="mt-3">
           <p className="text-[1rem] font-semibold text-emerald-600">
-            You will Save ₹1669 on this order
+            You will Save ₹{originalPrice - totalPrice} on this order
           </p>
         </div>
       </div>
