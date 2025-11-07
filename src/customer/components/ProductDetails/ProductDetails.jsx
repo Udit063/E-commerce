@@ -1,5 +1,6 @@
 import { StarIcon } from "@heroicons/react/20/solid";
-import { Button, Rating } from "@mui/material";
+import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
+import ProductReviewCard from "./ProductReviewCard";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -69,7 +70,7 @@ function classNames(...classes) {
 
 export const ProductDetails = () => {
   return (
-    <div className="bg-white">
+    <div className="bg-white lg:px-20">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol
@@ -239,6 +240,96 @@ export const ProductDetails = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Ratings and Reviews */}
+        <section>
+          <h1 className="font-semibold text-lg pb-4">Recent Review & Rating</h1>
+          <div className="border p-5">
+            <Grid container spacing={7}>
+              <Grid size={{ xs: 7 }}>
+                <div className="space-y-5">
+                  {[1, 1, 1].map((item) => (
+                    <ProductReviewCard />
+                  ))}
+                </div>
+              </Grid>
+              <Grid size={{ xs: 5 }}>
+                <h1 className="text-xl font-semibold pb-2">Product Ratings</h1>
+                <div className="flex items-center space-x-3">
+                  <Rating value={4.6} precision={0.5} readOnly />
+                  <p className="opacity-60">72386 Ratings</p>
+                </div>
+                <Box className="mt-5 space-y-3">
+                  <Grid container alignItems="center" gap={2}>
+                    <Grid size={{ xs: 2 }}>
+                      <p>Excellent</p>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <LinearProgress
+                        sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
+                        variant="determinate"
+                        value={40}
+                        color="success"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container alignItems="center" gap={2}>
+                    <Grid size={{ xs: 2 }}>
+                      <p>Very Good</p>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <LinearProgress
+                        sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
+                        variant="determinate"
+                        value={30}
+                        color="secondary"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container alignItems="center" gap={2}>
+                    <Grid size={{ xs: 2 }}>
+                      <p>Good</p>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <LinearProgress
+                        sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
+                        variant="determinate"
+                        value={25}
+                        color="info"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container alignItems="center" gap={2}>
+                    <Grid size={{ xs: 2 }}>
+                      <p>Average</p>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <LinearProgress
+                        sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
+                        variant="determinate"
+                        value={20}
+                        color="warning"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container alignItems="center" gap={2}>
+                    <Grid size={{ xs: 2 }}>
+                      <p>Poor</p>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <LinearProgress
+                        sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
+                        variant="determinate"
+                        value={15}
+                        color="error"
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+            </Grid>
           </div>
         </section>
       </div>
