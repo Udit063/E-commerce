@@ -1,4 +1,6 @@
 import "./App.css";
+import Cart from "./customer/components/Cart/Cart";
+import {Checkout} from "./customer/components/Checkout/Checkout";
 import Footer from "./customer/components/Footer/Footer";
 import Navigation from "./customer/components/navigation/Navigation";
 import HomePage from "./customer/components/pages/HomePage/HomePage";
@@ -12,7 +14,9 @@ function App() {
       <div className="font-bold">
         {/* <HomePage /> */}
         {/* <Product /> */}
-        <ProductDetails />
+        {/* <ProductDetails /> */}
+        {/* <Cart /> */}
+        <Checkout />
       </div>
       <Footer />
     </div>
