@@ -1,3 +1,4 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Cart from "./customer/components/Cart/Cart";
 import {Checkout} from "./customer/components/Checkout/Checkout";
@@ -8,21 +9,14 @@ import OrderDetails from "./customer/components/Order/OrderDetails";
 import HomePage from "./customer/components/pages/HomePage/HomePage";
 import Product from "./customer/components/Product/Product";
 import {ProductDetails} from "./customer/components/ProductDetails/ProductDetails";
+import CustomerRoutes from "./Routers/CustomerRoutes";
 
 function App() {
   return (
     <div>
-      <Navigation />
-      <div className="font-bold">
-        {/* <HomePage /> */}
-        {/* <Product /> */}
-        {/* <ProductDetails /> */}
-        {/* <Cart /> */}
-        {/* <Checkout /> */}
-        {/* <Order /> */}
-        <OrderDetails />
-      </div>
-      <Footer />
+      <Routes>
+        <Route path="/*" element={<CustomerRoutes />}></Route>
+      </Routes>
     </div>
   );
 }

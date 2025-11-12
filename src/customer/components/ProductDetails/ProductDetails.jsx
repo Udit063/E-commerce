@@ -3,6 +3,7 @@ import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
 import { mens_kurta } from "../../../data/Men/men_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
+import { useNavigate } from "react-router-dom";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -71,6 +72,10 @@ function classNames(...classes) {
 }
 
 export const ProductDetails = () => {
+  const navigate = useNavigate();
+  const handleAddToCart = () => {
+    navigate("/cart");
+  };
   return (
     <div className="bg-white lg:px-20">
       <div className="pt-6">
@@ -198,6 +203,7 @@ export const ProductDetails = () => {
                 </div>
 
                 <Button
+                  onClick={handleAddToCart}
                   variant="contained"
                   sx={{ px: "2rem", py: "1rem", bgcolor: "#9155fd" }}
                 >
