@@ -1,15 +1,15 @@
 // @ts-nocheck
 import { api } from "../../config/apiConfig";
-const {
+import {
   FIND_PRODUCTS_REQUEST,
   FIND_PRODUCTS_SUCCESS,
   FIND_PRODUCTS_FAILURE,
   FIND_PRODUCT_BY_ID_REQUEST,
   FIND_PRODUCT_BY_ID_SUCCESS,
   FIND_PRODUCT_BY_ID_FAILURE,
-} = require("./ActionType");
+} from "./ActionType";
 
-const findProducts = (reqData) => async (dispatch) => {
+export const findProducts = (reqData) => async (dispatch) => {
   dispatch({ type: FIND_PRODUCTS_REQUEST });
   const {
     colors,
@@ -33,7 +33,7 @@ const findProducts = (reqData) => async (dispatch) => {
   }
 };
 
-const findProductById = (reqData) => async (dispatch) => {
+export const findProductById = (reqData) => async (dispatch) => {
   dispatch({ type: FIND_PRODUCT_BY_ID_REQUEST });
   const { productId } = reqData;
   try {
