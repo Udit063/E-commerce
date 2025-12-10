@@ -1,6 +1,6 @@
-import { mens_kurta } from "../../../../data/Men/men_kurta";
-import MainCarousel from "../../HomeCarousel/MainCarousel";
-import HomeSectionCarousal from "../../HomeSectionCarousal/HomeSectionCarousal";
+import { mens_kurta } from "../../../data/Men/men_kurta";
+import MainCarousel from "../../components/HomeCarousel/MainCarousel";
+import HomeSectionCarousal from "../../components/HomeSectionCarousal/HomeSectionCarousal";
 
 const HomePage = () => {
   return (
