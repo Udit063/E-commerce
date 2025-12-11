@@ -5,7 +5,7 @@ const cartInitialState = {
   cartItems: [],
 };
 
-const cartReducer = (state = cartInitialState, action) => {
+export const cartReducer = (state = cartInitialState, action) => {
   switch (action.type) {
     case "ADD_ITEM_TO_CART_REQUEST":
       return { ...state, loading: true, error: null };

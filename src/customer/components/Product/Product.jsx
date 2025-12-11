@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useState, useMemo, useEffect } from "react";
 import {
   Dialog,
@@ -52,7 +51,8 @@ export default function Product() {
   const navigate = useNavigate();
   const param = useParams();
   const dispatch = useDispatch();
-  const { product } = useSelector((store) => store);
+  //@ts-ignore
+  const { products } = useSelector((store) => store);
 
   const decodedQueryString = decodeURIComponent(location.search);
   const searchParams = new URLSearchParams(decodedQueryString);
@@ -66,6 +66,7 @@ export default function Product() {
 
   const handlePaginationChange = (event, value) => {
     const searchParams = new URLSearchParams(location.search);
+    //@ts-ignore
     searchParams.set("pageNumber", value - 1);
     const query = searchParams.toString();
     navigate({ search: `?${query}` });
@@ -123,6 +124,7 @@ export default function Product() {
       stock: stock || "",
     };
 
+    //@ts-ignore
     dispatch(findProducts(data));
   }, [
     param.levelThree,
@@ -135,7 +137,7 @@ export default function Product() {
     pageNumber,
   ]);
 
-  console.log("kjdf", product);
+  console.log("kjdf", products);
 
   return (
     <div className="bg-white">
@@ -469,8 +471,8 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5">
-                  {product.products?.content &&
-                    product.products?.content.map((item) => (
+                  {products.products?.content &&
+                    products.products?.content.map((item) => (
                       <ProductCard product={item} />
                     ))}
                 </div>
@@ -480,7 +482,7 @@ export default function Product() {
           <section className="w-full px=[3.6rem]">
             <div className="px-4 py-5 flex justify-center">
               <Pagination
-                count={product.products?.totalPages}
+                count={products.products?.totalPages}
                 color="secondary"
                 onChange={handlePaginationChange}
               />
