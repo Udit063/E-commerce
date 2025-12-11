@@ -1,9 +1,13 @@
-import { StarIcon } from "@heroicons/react/20/solid";
+//@ts-nocheck
 import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
 import { mens_kurta } from "../../../data/Men/men_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { findProductById } from "../../../store/Product/Action";
+import { addItemToCart } from "../../../store/Cart/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -72,10 +76,25 @@ function classNames(...classes) {
 }
 
 export const ProductDetails = () => {
+  const [selectedSize, setSelectedSize] = useState("M");
   const navigate = useNavigate();
+  const params = useParams();
+  const dispatch = useDispatch();
+  const { products } = useSelector((store) => store);
+
   const handleAddToCart = () => {
+    const data = { productId: params.productId, size: selectedSize };
+    console.log("cart data: ", data);
+
+    dispatch(addItemToCart(data));
     navigate("/cart");
   };
+
+  useEffect(() => {
+    const data = { productId: params.productId };
+    dispatch(findProductById(data));
+  }, [params.productId]);
+
   return (
     <div className="bg-white lg:px-20">
       <div className="pt-6">
@@ -122,8 +141,8 @@ export const ProductDetails = () => {
           <div className="flex flex-col items-center">
             <div className="overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
               <img
-                alt={product.images[0].alt}
-                src={product.images[0].src}
+                alt={products.product?.imageUrl}
+                src={products.product?.imageUrl}
                 className="row-span-2 aspect-3/4 size-full rounded-lg object-cover max-lg:hidden"
               />
             </div>
@@ -143,10 +162,10 @@ export const ProductDetails = () => {
           <div className="lg:col-span-1 max-h-auto max-w-2xl px-4 pb-16 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24">
             <div className="lg:col-span-2">
               <h1 className="text-lg lg:text-xl font-semibold text-gray-900">
-                {product.name}
+                {products.product?.brand}
               </h1>
               <h1 className="text-lg lg:text-xl text-gray-900 opacity-60 pt-1">
-                {product.description}
+                {products.product?.title}
               </h1>
             </div>
 
@@ -154,9 +173,15 @@ export const ProductDetails = () => {
             <div className="mt-4 lg:row-span-3 lg:mt-0">
               <h2 className="sr-only">Product information</h2>
               <div className="flex items-center space-x-5 text-lg lg:text-xl text-gray-900 mt-6">
-                <p className="font-semibold">₹{product.price}</p>
-                <p className="opacity-50 line-through">₹{product.price}</p>
-                <p className="text-green-600 font-semibold">5% off</p>
+                <p className="font-semibold">
+                  ₹{products.product?.discountedPrice}
+                </p>
+                <p className="opacity-50 line-through">
+                  ₹{products.product?.price}
+                </p>
+                <p className="text-green-600 font-semibold">
+                  {products.product?.discountPercent}% off
+                </p>
               </div>
 
               {/* Reviews */}
@@ -181,15 +206,16 @@ export const ProductDetails = () => {
                     <div className="grid grid-cols-4 gap-3">
                       {product.sizes.map((size) => (
                         <label
-                          key={size.id}
+                          key={size.name}
                           aria-label={size.name}
-                          className="group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25"
+                          className={`group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25 cursor-pointer ${selectedSize === size.name ? 'ring-2 ring-indigo-600' : ''}`}
                         >
                           <input
-                            defaultValue={size.id}
-                            defaultChecked={size === product.sizes[2]}
+                            value={size.name}
+                            checked={selectedSize === size.name}
                             name="size"
                             type="radio"
+                            onChange={() => setSelectedSize(size.name)}
                             disabled={!size.inStock}
                             className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
                           />
