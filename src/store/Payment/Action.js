@@ -8,17 +8,19 @@ import {
   UPDATE_PAYMENT_SUCCESS,
 } from "./ActionType";
 
-export const createPayment = (reqData) => async (dispatch) => {
+export const createPayment = (orderId) => async (dispatch) => {
   dispatch({ type: CREATE_PAYMENT_REQUEST });
   try {
     const { data } = await api.post(
-      `/api/payments/${reqData.orderId}`,
-      reqData
+      `/api/payments/${orderId}`,
+      {}
     );
     if (data.payment_link_url) {
       window.location.href = data.payment_link_url;
     }
-    dispatch({ type: CREATE_PAYMENT_SUCCESS, payload: data });
+    console.log("data aayaa", data);
+    
+    // dispatch({ type: CREATE_PAYMENT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: CREATE_PAYMENT_FAILURE, payload: error.message });
   }
@@ -32,7 +34,7 @@ export const updatePayment = (reqData) => async (dispatch) => {
     );
     console.log("update payment:", data);
 
-    dispatch({ type: UPDATE_PAYMENT_SUCCESS, payload: data });
+    // dispatch({ type: UPDATE_PAYMENT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: UPDATE_PAYMENT_FAILURE, payload: error.message });
   }

@@ -1,25 +1,29 @@
-import React, { useEffect } from "react";
+//@ts-nocheck
+import { useEffect } from "react";
 import AddressCard from "../AddressCard/AddressCard";
 import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { getOrderById } from "../../../store/Order/Action";
 import { CartItem } from "../Cart/CartItem";
+import { createPayment } from "../../../store/Payment/Action";
 
 const OrderSummary = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  //@ts-ignore
   const { order } = useSelector((store) => store);
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get("order_id");
 
   useEffect(() => {
-    //@ts-ignore
     dispatch(getOrderById(orderId));
   }, [orderId]);
 
   console.log("order:", order);
+
+  const handleCheckout = () => {
+    dispatch(createPayment(orderId));
+  }
 
   return (
     <div>
@@ -61,6 +65,7 @@ const OrderSummary = () => {
                 variant="contained"
                 className="w-full mt-5"
                 sx={{ px: "2.5rem", py: "0.7rem", bgcolor: "#9155fd" }}
+                onClick={handleCheckout}
               >
                 Checkout
               </Button>
