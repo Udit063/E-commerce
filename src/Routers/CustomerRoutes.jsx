@@ -8,6 +8,7 @@ import { Checkout } from "../customer/components/Checkout/Checkout";
 import Order from "../customer/components/Order/Order";
 import OrderDetails from "../customer/components/Order/OrderDetails";
 import HomePage from "../customer/pages/HomePage/HomePage";
+import PaymentSuccess from "../customer/components/Payment/PaymentSuccess";
 
 const CustomerRoutes = () => {
   return (
@@ -31,6 +32,10 @@ const CustomerRoutes = () => {
         <Route
           path="/account/order/:orderId"
           element={<OrderDetails />}
+        ></Route>
+        <Route
+          path="/payment/:orderId"
+          element={<PaymentSuccess />}
         ></Route>
       </Routes>
       <div>
