@@ -51,7 +51,7 @@ const Admin = () => {
         height: "100%",
       }}
     >
-      {isLargeScreen && <Toolbar />}
+      {/* {isLargeScreen && <Toolbar />} */}
       <List>
         {menu.map((item, index) => (
           <ListItem
@@ -82,7 +82,7 @@ const Admin = () => {
     <div>
       <div className="flex h-[100vh]">
         <CssBaseline />
-        <div className="w-[15%] border border-r-gray-300 ">{drawer}</div>
+        <div className="w-[15%] border border-r-gray-300 h-full">{drawer}</div>
         <div className="w-[85%]">
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
