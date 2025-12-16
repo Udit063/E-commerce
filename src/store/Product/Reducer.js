@@ -1,3 +1,5 @@
+import { DELETE_PRODUCT_SUCCESS } from "./ActionType";
+
 const initialState = {
   products: [],
   product: null,
@@ -27,7 +29,15 @@ export const customerProductReducer = (state = initialState, action) => {
 
     case "FIND_PRODUCT_BY_ID_FAILURE":
       return { ...state, loading: false, error: action.payload };
-      
+
+    case DELETE_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        deletedProduct: action.payload,
+      };
+
     default:
       return state;
   }

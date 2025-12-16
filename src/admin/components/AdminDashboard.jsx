@@ -2,6 +2,7 @@
 import { Grid } from "@mui/material";
 import Achievement from "./Achievement";
 import MonthlyOverview from "./MonthlyOverview";
+import ProductsTable from "./ProductsTable";
 
 const AdminDashboard = () => {
   return (
@@ -12,6 +13,9 @@ const AdminDashboard = () => {
         </Grid>
         <Grid item size={{ xs: 12, md: 8 }}>
           <MonthlyOverview />
+        </Grid>
+        <Grid item size={{ xs: 12, md: 6 }}>
+          <ProductsTable />
         </Grid>
       </Grid>
     </div>
