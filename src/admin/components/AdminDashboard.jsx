@@ -1,21 +1,33 @@
 //@ts-nocheck
 import { Grid } from "@mui/material";
+import OrdertableView from "../view/OrderTableView";
+import ProductTableView from "../view/ProductTableView";
 import Achievement from "./Achievement";
 import MonthlyOverview from "./MonthlyOverview";
-import ProductsTable from "./ProductsTable";
 
 const AdminDashboard = () => {
   return (
     <div className="p-10">
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid item size={{ xs: 12, md: 4 }}>
-          <Achievement />
+          <div className="shadow-lg shadow-gray-600">
+            <Achievement />
+          </div>
         </Grid>
         <Grid item size={{ xs: 12, md: 8 }}>
-          <MonthlyOverview />
+          <div className="shadow-lg shadow-gray-600">
+            <MonthlyOverview />
+          </div>
         </Grid>
         <Grid item size={{ xs: 12, md: 6 }}>
-          <ProductsTable />
+          <div className="shadow-lg shadow-gray-600">
+            <OrdertableView />
+          </div>
+        </Grid>
+        <Grid item size={{ xs: 12, md: 6 }}>
+          <div className="shadow-lg shadow-gray-600">
+            <ProductTableView />
+          </div>
         </Grid>
       </Grid>
     </div>

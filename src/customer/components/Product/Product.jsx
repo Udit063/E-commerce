@@ -120,14 +120,14 @@ export default function Product() {
       minDiscount: discount || 0,
       sort: sortValue || "price_low",
       pageNumber: pageNumber || 0,
-      pageSize: 1,
+      pageSize: 10,
       stock: stock || "",
-    };
+    };    
 
     //@ts-ignore
     dispatch(findProducts(data));
   }, [
-    param.levelThree,
+    param.lavelThree,
     colorValue,
     sizeValue,
     priceValue,
