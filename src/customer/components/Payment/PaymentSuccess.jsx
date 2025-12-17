@@ -10,7 +10,6 @@ import OrderTracker from "../Order/OrderTracker";
 
 const PaymentSuccess = () => {
   const [paymentId, setPaymentId] = useState("");
-  const [referenceId, setReferenceId] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const { orderId } = useParams();
 
