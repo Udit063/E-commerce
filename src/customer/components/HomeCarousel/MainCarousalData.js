@@ -5,7 +5,7 @@ export const MainCorousalData = [
   },
   {
     image: "/assets/images/banner2.jpg",
-    link: "https://www.kalkifashion.com/blogs/wp-content/uploads/2025/08/bridal-blog-banner-scaled.jpg"
+    link: "https://ik.imagekit.io/4sjmoqtje/tr:w-1920,c-at_max/cdn/shop/files/Bridal-banner-desk-12-4-24.jpg?v=1729079055"
   },
   {
     image: "/assets/images/banner3.jpg",
