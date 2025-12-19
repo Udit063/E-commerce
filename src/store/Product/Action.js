@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { api, API_BASE_URL } from "../../config/apiConfig";
+import { api } from "../../config/apiConfig";
 import {
   FIND_PRODUCTS_REQUEST,
   FIND_PRODUCTS_SUCCESS,
@@ -55,10 +55,7 @@ export const findProductById = (reqData) => async (dispatch) => {
 export const createProduct = (product) => async (dispatch) => {
   try {
     dispatch({ type: CREATE_PRODUCT_REQUEST });
-    const { data } = await api.post(
-      `/api/admin/products/`,
-      product
-    );    
+    const { data } = await api.post(`/api/admin/products/`, product);
     dispatch({ type: CREATE_PRODUCT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: CREATE_PRODUCT_FAILURE, payload: error.message });
