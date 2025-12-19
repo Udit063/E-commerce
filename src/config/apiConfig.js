@@ -9,6 +9,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: false, // Explicitly set to false for CORS
 });
 
 api.interceptors.request.use(
