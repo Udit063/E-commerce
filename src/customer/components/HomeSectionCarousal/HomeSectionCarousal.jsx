@@ -31,7 +31,7 @@ const HomeSectionCarousal = ({ data, sectionName }) => {
     .map((item) => <HomeSectionCard product={item} key={item.id} />);
 
   return (
-    <div className="border border-black">
+    <div>
       <h2 className="text-2xl font-extrabold text-gray-800 py-5">
         {sectionName}
       </h2>

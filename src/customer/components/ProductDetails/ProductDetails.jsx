@@ -6,8 +6,12 @@ import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { findProductById } from "../../../store/Product/Action";
+import {
+  findProductById,
+  getProductsByCategory,
+} from "../../../store/Product/Action";
 import { addItemToCart } from "../../../store/Cart/Action";
+import HomeSectionCarousal from "../HomeSectionCarousal/HomeSectionCarousal";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -94,6 +98,17 @@ export const ProductDetails = () => {
     const data = { productId: params.productId };
     dispatch(findProductById(data));
   }, [params.productId]);
+
+  useEffect(() => {
+    if (products.product?.category?.name) {
+      dispatch(getProductsByCategory(products.product.category.name));
+    }
+  }, [products.product?.category?.name, dispatch]);
+
+  const similarProducts =
+    products.productsByCategory?.[products.product?.category?.name]
+      ?.filter((item) => item.id !== products.product?.id)
+      .slice(0, 10) || [];
 
   return (
     <div className="bg-white lg:px-20">
@@ -208,7 +223,11 @@ export const ProductDetails = () => {
                         <label
                           key={size.name}
                           aria-label={size.name}
-                          className={`group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25 cursor-pointer ${selectedSize === size.name ? 'ring-2 ring-indigo-600' : ''}`}
+                          className={`group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25 cursor-pointer ${
+                            selectedSize === size.name
+                              ? "ring-2 ring-indigo-600"
+                              : ""
+                          }`}
                         >
                           <input
                             value={size.name}
@@ -368,14 +387,14 @@ export const ProductDetails = () => {
         </section>
 
         {/* Similar Products */}
-        <section className="pt-10">
-          <h1 className="py-5 text-xl font-bold">Similar Products</h1>
-          <div className="flex flex-wrap gap-5">
-            {mens_kurta.map((item, index) => (
-              <HomeSectionCard key={index} product={item} />
-            ))}
-          </div>
-        </section>
+        {similarProducts.length > 0 && (
+          <section className="pt-10">
+            <HomeSectionCarousal
+              data={similarProducts}
+              sectionName="Similar Products"
+            />
+          </section>
+        )}
       </div>
     </div>
   );
