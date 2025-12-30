@@ -6,6 +6,12 @@ import {
   CREATE_REVIEW_REQUEST,
   CREATE_REVIEW_SUCCESS,
   DELETE_PRODUCT_SUCCESS,
+  GET_PRODUCT_REVIEWS_REQUEST,
+  GET_PRODUCT_RATINGS_FAILURE,
+  GET_PRODUCT_REVIEWS_SUCCESS,
+  GET_PRODUCT_RATINGS_SUCCESS,
+  GET_PRODUCT_REVIEWS_FAILURE,
+  GET_PRODUCT_RATINGS_REQUEST,
 } from "./ActionType";
 
 const initialState = {
@@ -20,6 +26,12 @@ const initialState = {
   reviewError: null,
   rating: null,
   review: null,
+  ratingsLoading: false,
+  ratingsError: null,
+  ratings: null,
+  reviewsLoading: false,
+  reviewsError: null,
+  reviews: null,
 };
 
 export const customerProductReducer = (state = initialState, action) => {
@@ -111,6 +123,50 @@ export const customerProductReducer = (state = initialState, action) => {
         ...state,
         reviewLoading: false,
         reviewError: action.payload,
+      };
+
+    case GET_PRODUCT_RATINGS_REQUEST:
+      return {
+        ...state,
+        ratingsLoading: true,
+        ratingsError: null,
+      };
+
+    case GET_PRODUCT_RATINGS_SUCCESS:
+      return {
+        ...state,
+        ratingsLoading: false,
+        ratings: action.payload,
+        ratingsError: null,
+      };
+
+    case GET_PRODUCT_RATINGS_FAILURE:
+      return {
+        ...state,
+        ratingsLoading: false,
+        ratingsError: action.payload,
+      };
+
+    case GET_PRODUCT_REVIEWS_REQUEST:
+      return {
+        ...state,
+        reviewsLoading: true,
+        reviewsError: null,
+      };
+
+    case GET_PRODUCT_REVIEWS_SUCCESS:
+      return {
+        ...state,
+        reviewsLoading: false,
+        reviews: action.payload,
+        reviewsError: null,
+      };
+
+    case GET_PRODUCT_REVIEWS_FAILURE:
+      return {
+        ...state,
+        reviewsLoading: false,
+        reviewsError: action.payload,
       };
 
     default:

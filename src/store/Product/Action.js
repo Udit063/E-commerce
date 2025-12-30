@@ -22,6 +22,12 @@ import {
   CREATE_RATING_FAILURE,
   CREATE_RATING_REQUEST,
   CREATE_REVIEW_REQUEST,
+  GET_PRODUCT_REVIEWS_REQUEST,
+  GET_PRODUCT_REVIEWS_SUCCESS,
+  GET_PRODUCT_REVIEWS_FAILURE,
+  GET_PRODUCT_RATINGS_FAILURE,
+  GET_PRODUCT_RATINGS_SUCCESS,
+  GET_PRODUCT_RATINGS_REQUEST,
 } from "./ActionType";
 
 export const findProducts = (reqData) => async (dispatch) => {
@@ -142,5 +148,35 @@ export const createReview = (reqData) => async (dispatch) => {
       success: false,
       error: error.response?.data?.message || error.message,
     };
+  }
+};
+
+// Get Product Ratings
+export const getProductRatings = (productId) => async (dispatch) => {
+  dispatch({ type: GET_PRODUCT_RATINGS_REQUEST });
+  try {
+    const { data } = await api.get(`/api/ratings/product/${productId}`);
+    console.log("product ratings: ", data);
+    dispatch({ type: GET_PRODUCT_RATINGS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_PRODUCT_RATINGS_FAILURE,
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
+
+// Get Product Reviews
+export const getProductReviews = (productId) => async (dispatch) => {
+  dispatch({ type: GET_PRODUCT_REVIEWS_REQUEST });
+  try {
+    const { data } = await api.get(`/api/reviews/product/${productId}`);
+    console.log("product reviews: ", data);
+    dispatch({ type: GET_PRODUCT_REVIEWS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_PRODUCT_REVIEWS_FAILURE,
+      payload: error.response?.data?.message || error.message,
+    });
   }
 };

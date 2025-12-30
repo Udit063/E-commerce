@@ -1,7 +1,6 @@
 //@ts-nocheck
 import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
-import { mens_kurta } from "../../../data/Men/men_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -9,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   findProductById,
   getProductsByCategory,
+  getProductRatings,
+  getProductReviews,
 } from "../../../store/Product/Action";
 import { addItemToCart } from "../../../store/Cart/Action";
 import HomeSectionCarousal from "../HomeSectionCarousal/HomeSectionCarousal";
@@ -73,7 +74,6 @@ const product = {
   details:
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 };
-const reviews = { href: "#", average: 4, totalCount: 117 };
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -105,10 +105,69 @@ export const ProductDetails = () => {
     }
   }, [products.product?.category?.name, dispatch]);
 
+  // Fetch ratings and reviews when product is loaded
+  useEffect(() => {
+    if (params.productId) {
+      dispatch(getProductRatings(params.productId));
+      dispatch(getProductReviews(params.productId));
+    }
+  }, [params.productId, dispatch]);
+
   const similarProducts =
     products.productsByCategory?.[products.product?.category?.name]
       ?.filter((item) => item.id !== products.product?.id)
       .slice(0, 10) || [];
+
+  // Calculate rating statistics
+  const calculateRatingStats = () => {
+    const ratings = products.ratings || [];
+    if (ratings.length === 0) {
+      return {
+        average: 0,
+        total: 0,
+        distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+      };
+    }
+
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let sum = 0;
+
+    ratings.forEach((item) => {
+      const rating = Math.round(item.rating);
+      distribution[rating] = (distribution[rating] || 0) + 1;
+      sum += item.rating;
+    });
+
+    return {
+      average: (sum / ratings.length).toFixed(1),
+      total: ratings.length,
+      distribution,
+    };
+  };
+
+  const ratingStats = calculateRatingStats();
+
+  // Calculate percentage for each rating category
+  const getRatingPercentage = (count) => {
+    if (ratingStats.total === 0) return 0;
+    return Math.round((count / ratingStats.total) * 100);
+  };
+
+  // Combine ratings and reviews by matching user
+  const getCombinedReviews = () => {
+    const ratings = products.ratings || [];
+    const reviews = products.reviews || [];
+
+    return reviews.map((review) => {
+      const userRating = ratings.find((r) => r.user.id === review.user.id);
+      return {
+        ...review,
+        rating: userRating?.rating || 0,
+      };
+    });
+  };
+
+  const combinedReviews = getCombinedReviews();
 
   return (
     <div className="bg-white lg:px-20">
@@ -162,8 +221,11 @@ export const ProductDetails = () => {
               />
             </div>
             <div className="flex flex-wrap space-x-5 justify-center">
-              {product.images.slice(1).map((item) => (
-                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg max-w-[5rem] max-h-[5rem] mt-4">
+              {product.images.slice(1).map((item, index) => (
+                <div
+                  key={index}
+                  className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg max-w-[5rem] max-h-[5rem] mt-4"
+                >
                   <img
                     src={item.src}
                     alt={item.alt}
@@ -202,10 +264,17 @@ export const ProductDetails = () => {
               {/* Reviews */}
               <div className="mt-6">
                 <div className="flex items-center space-x-3">
-                  <Rating name="read-only" value={5.5} readOnly />
-                  <p className="opacity-50 text-sm">3683 Ratings</p>
+                  <Rating
+                    name="read-only"
+                    value={parseFloat(ratingStats.average)}
+                    precision={0.5}
+                    readOnly
+                  />
+                  <p className="opacity-50 text-sm">
+                    {ratingStats.total} Ratings
+                  </p>
                   <p className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                    2987 Reviews
+                    {combinedReviews.length} Reviews
                   </p>
                 </div>
               </div>
@@ -301,18 +370,30 @@ export const ProductDetails = () => {
           <h1 className="font-semibold text-lg pb-4">Recent Review & Rating</h1>
           <div className="border p-5">
             <Grid container spacing={7}>
-              <Grid size={{ xs: 7 }}>
+              <Grid size={{ xs: 12, md: 7 }}>
                 <div className="space-y-5">
-                  {[1, 1, 1].map((item) => (
-                    <ProductReviewCard />
-                  ))}
+                  {products.reviewsLoading ? (
+                    <p className="text-center py-5">Loading reviews...</p>
+                  ) : combinedReviews.length > 0 ? (
+                    combinedReviews.map((review) => (
+                      <ProductReviewCard key={review.id} review={review} />
+                    ))
+                  ) : (
+                    <p className="text-center py-5 text-gray-500">
+                      No reviews yet. Be the first to review this product!
+                    </p>
+                  )}
                 </div>
               </Grid>
-              <Grid size={{ xs: 5 }}>
+              <Grid size={{ xs: 12, md: 5 }}>
                 <h1 className="text-xl font-semibold pb-2">Product Ratings</h1>
                 <div className="flex items-center space-x-3">
-                  <Rating value={4.6} precision={0.5} readOnly />
-                  <p className="opacity-60">72386 Ratings</p>
+                  <Rating
+                    value={parseFloat(ratingStats.average)}
+                    precision={0.5}
+                    readOnly
+                  />
+                  <p className="opacity-60">{ratingStats.total} Ratings</p>
                 </div>
                 <Box className="mt-5 space-y-3">
                   <Grid container alignItems="center" gap={2}>
@@ -323,9 +404,14 @@ export const ProductDetails = () => {
                       <LinearProgress
                         sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
                         variant="determinate"
-                        value={40}
+                        value={getRatingPercentage(ratingStats.distribution[5])}
                         color="success"
                       />
+                    </Grid>
+                    <Grid size={{ xs: 2 }}>
+                      <p className="text-sm opacity-60">
+                        {ratingStats.distribution[5]}
+                      </p>
                     </Grid>
                   </Grid>
                   <Grid container alignItems="center" gap={2}>
@@ -336,9 +422,14 @@ export const ProductDetails = () => {
                       <LinearProgress
                         sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
                         variant="determinate"
-                        value={30}
-                        color="secondary"
+                        value={getRatingPercentage(ratingStats.distribution[4])}
+                        color="success"
                       />
+                    </Grid>
+                    <Grid size={{ xs: 2 }}>
+                      <p className="text-sm opacity-60">
+                        {ratingStats.distribution[4]}
+                      </p>
                     </Grid>
                   </Grid>
                   <Grid container alignItems="center" gap={2}>
@@ -349,9 +440,14 @@ export const ProductDetails = () => {
                       <LinearProgress
                         sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
                         variant="determinate"
-                        value={25}
+                        value={getRatingPercentage(ratingStats.distribution[3])}
                         color="info"
                       />
+                    </Grid>
+                    <Grid size={{ xs: 2 }}>
+                      <p className="text-sm opacity-60">
+                        {ratingStats.distribution[3]}
+                      </p>
                     </Grid>
                   </Grid>
                   <Grid container alignItems="center" gap={2}>
@@ -362,9 +458,14 @@ export const ProductDetails = () => {
                       <LinearProgress
                         sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
                         variant="determinate"
-                        value={20}
+                        value={getRatingPercentage(ratingStats.distribution[2])}
                         color="warning"
                       />
+                    </Grid>
+                    <Grid size={{ xs: 2 }}>
+                      <p className="text-sm opacity-60">
+                        {ratingStats.distribution[2]}
+                      </p>
                     </Grid>
                   </Grid>
                   <Grid container alignItems="center" gap={2}>
@@ -375,9 +476,14 @@ export const ProductDetails = () => {
                       <LinearProgress
                         sx={{ bgcolor: "#d0d0d0", borderRadius: 4, height: 7 }}
                         variant="determinate"
-                        value={15}
+                        value={getRatingPercentage(ratingStats.distribution[1])}
                         color="error"
                       />
+                    </Grid>
+                    <Grid size={{ xs: 2 }}>
+                      <p className="text-sm opacity-60">
+                        {ratingStats.distribution[1]}
+                      </p>
                     </Grid>
                   </Grid>
                 </Box>
