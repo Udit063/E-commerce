@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AddressCard from "../AddressCard/AddressCard";
@@ -8,12 +8,17 @@ import { Box, Grid } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { getOrderById } from "../../../store/Order/Action";
+import RatingReviewModal from "./RatingReviewModel";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const dispatch = useDispatch();
   //@ts-ignore
   const { order } = useSelector((store) => store);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOrderItemId, setSelectedOrderItemId] = useState(null);
 
   useEffect(() => {
     if (orderId) {
@@ -36,6 +41,18 @@ const OrderDetails = () => {
       default:
         return 0;
     }
+  };
+
+  const handleOpenModal = (product, orderItemId) => {
+    setSelectedProduct(product);
+    setSelectedOrderItemId(orderItemId);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedProduct(null);
+    setSelectedOrderItemId(null);
   };
 
   if (order.loading) {
@@ -95,7 +112,10 @@ const OrderDetails = () => {
               </div>
             </Grid>
             <Grid>
-              <Box sx={{ color: deepPurple[500] }}>
+              <Box
+                sx={{ color: deepPurple[500], cursor: "pointer" }}
+                onClick={() => handleOpenModal(orderItem.product, orderItem.id)}
+              >
                 <StarBorderIcon sx={{ fontSize: "2rem" }} className="px-2" />
                 <span>Rate & Review Product</span>
               </Box>
@@ -103,6 +123,16 @@ const OrderDetails = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Rating & Review Modal */}
+      {selectedProduct && (
+        <RatingReviewModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          product={selectedProduct}
+          orderItemId={selectedOrderItemId}
+        />
+      )}
     </div>
   );
 };

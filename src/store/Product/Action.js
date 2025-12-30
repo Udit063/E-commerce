@@ -16,6 +16,12 @@ import {
   DELETE_PRODUCT_REQUEST,
   DELETE_PRODUCT_SUCCESS,
   DELETE_PRODUCT_FAILURE,
+  CREATE_REVIEW_SUCCESS,
+  CREATE_REVIEW_FAILURE,
+  CREATE_RATING_SUCCESS,
+  CREATE_RATING_FAILURE,
+  CREATE_RATING_REQUEST,
+  CREATE_REVIEW_REQUEST,
 } from "./ActionType";
 
 export const findProducts = (reqData) => async (dispatch) => {
@@ -96,5 +102,45 @@ export const deleteProductById = (productId) => async (dispatch) => {
         error.response?.data?.message ||
         "Product cannot be deleted because it is used in orders",
     });
+  }
+};
+
+// Rating Actions
+export const createRating = (reqData) => async (dispatch) => {
+  dispatch({ type: CREATE_RATING_REQUEST });
+  try {
+    const { data } = await api.post("/api/ratings/create", reqData);
+    console.log("rating created: ", data);
+    dispatch({ type: CREATE_RATING_SUCCESS, payload: data });
+    return { success: true, data };
+  } catch (error) {
+    dispatch({
+      type: CREATE_RATING_FAILURE,
+      payload: error.response?.data?.message || error.message,
+    });
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+
+// Review Actions
+export const createReview = (reqData) => async (dispatch) => {
+  dispatch({ type: CREATE_REVIEW_REQUEST });
+  try {
+    const { data } = await api.post("/api/reviews/create", reqData);
+    console.log("review created: ", data);
+    dispatch({ type: CREATE_REVIEW_SUCCESS, payload: data });
+    return { success: true, data };
+  } catch (error) {
+    dispatch({
+      type: CREATE_REVIEW_FAILURE,
+      payload: error.response?.data?.message || error.message,
+    });
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
   }
 };

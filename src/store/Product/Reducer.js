@@ -1,4 +1,12 @@
-import { DELETE_PRODUCT_SUCCESS } from "./ActionType";
+import {
+  CREATE_RATING_FAILURE,
+  CREATE_RATING_REQUEST,
+  CREATE_RATING_SUCCESS,
+  CREATE_REVIEW_FAILURE,
+  CREATE_REVIEW_REQUEST,
+  CREATE_REVIEW_SUCCESS,
+  DELETE_PRODUCT_SUCCESS,
+} from "./ActionType";
 
 const initialState = {
   products: [],
@@ -6,6 +14,12 @@ const initialState = {
   productsByCategory: {},
   loading: false,
   error: null,
+  ratingLoading: false,
+  ratingError: null,
+  reviewLoading: false,
+  reviewError: null,
+  rating: null,
+  review: null,
 };
 
 export const customerProductReducer = (state = initialState, action) => {
@@ -52,6 +66,51 @@ export const customerProductReducer = (state = initialState, action) => {
         loading: false,
         error: null,
         deletedProduct: action.payload,
+      };
+
+    case CREATE_RATING_REQUEST:
+      return {
+        ...state,
+        ratingLoading: true,
+        ratingError: null,
+      };
+
+    case CREATE_RATING_SUCCESS:
+      return {
+        ...state,
+        ratingLoading: false,
+        rating: action.payload,
+        ratingError: null,
+      };
+
+    case CREATE_RATING_FAILURE:
+      return {
+        ...state,
+        ratingLoading: false,
+        ratingError: action.payload,
+      };
+
+    // Review cases
+    case CREATE_REVIEW_REQUEST:
+      return {
+        ...state,
+        reviewLoading: true,
+        reviewError: null,
+      };
+
+    case CREATE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        reviewLoading: false,
+        review: action.payload,
+        reviewError: null,
+      };
+
+    case CREATE_REVIEW_FAILURE:
+      return {
+        ...state,
+        reviewLoading: false,
+        reviewError: action.payload,
       };
 
     default:
