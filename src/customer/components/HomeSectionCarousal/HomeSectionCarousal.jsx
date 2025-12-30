@@ -4,7 +4,7 @@ import { useState } from "react";
 import AliceCarousel from "react-alice-carousel";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 
-const HomeSectionCarousal = ({data, sectionName}) => {
+const HomeSectionCarousal = ({ data, sectionName }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const responsive = {
     0: { items: 1 },
@@ -22,13 +22,19 @@ const HomeSectionCarousal = ({data, sectionName}) => {
     if (mainRef) mainRef.slideNext();
   };
 
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return null;
+  }
+
   const items = data
     .slice(0, 10)
     .map((item) => <HomeSectionCard product={item} key={item.id} />);
 
   return (
     <div className="border border-black">
-      <h2 className="text-2xl font-extrabold text-gray-800 py-5">{sectionName}</h2>
+      <h2 className="text-2xl font-extrabold text-gray-800 py-5">
+        {sectionName}
+      </h2>
       <div className="relative p-5">
         <AliceCarousel
           ref={(el) => setMainRef(el)}

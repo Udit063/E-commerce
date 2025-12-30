@@ -7,6 +7,9 @@ import {
   FIND_PRODUCT_BY_ID_REQUEST,
   FIND_PRODUCT_BY_ID_SUCCESS,
   FIND_PRODUCT_BY_ID_FAILURE,
+  GET_PRODUCTS_BY_CATEGORY_REQUEST,
+  GET_PRODUCTS_BY_CATEGORY_SUCCESS,
+  GET_PRODUCTS_BY_CATEGORY_FAILURE,
   CREATE_PRODUCT_REQUEST,
   CREATE_PRODUCT_SUCCESS,
   CREATE_PRODUCT_FAILURE,
@@ -49,6 +52,23 @@ export const findProductById = (reqData) => async (dispatch) => {
     dispatch({ type: FIND_PRODUCT_BY_ID_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: FIND_PRODUCT_BY_ID_FAILURE, payload: error.message });
+  }
+};
+
+export const getProductsByCategory = (categoryName) => async (dispatch) => {
+  dispatch({ type: GET_PRODUCTS_BY_CATEGORY_REQUEST });
+  try {
+    const { data } = await api.get(`/api/products/category/${categoryName}`);
+    console.log("products by category: ", data);
+    dispatch({
+      type: GET_PRODUCTS_BY_CATEGORY_SUCCESS,
+      payload: { categoryName, products: data },
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_PRODUCTS_BY_CATEGORY_FAILURE,
+      payload: error.message,
+    });
   }
 };
 
