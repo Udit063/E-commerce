@@ -21,7 +21,6 @@ import {
   Squares2X2Icon,
   ListBulletIcon,
 } from "@heroicons/react/20/solid";
-import { mens_kurta } from "../../../data/Men/men_kurta";
 import ProductCard from "./ProductCard";
 import { filters, singleFilter } from "./FilterData";
 import {
@@ -419,12 +418,12 @@ export default function Product() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
               {/* Filters */}
-              <div>
-                <div className="py-10 flex justify-between items-center">
+              <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-2">
+                <div className="py-10 flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
                   <h1 className="text-lg opacity-50 font-bold">Filters</h1>
                   <FilterList />
                 </div>
-                <form className="hidden lg:block">
+                <form className="hidden lg:block pb-4">
                   {filters.map((section) => (
                     <Disclosure
                       key={section.id}

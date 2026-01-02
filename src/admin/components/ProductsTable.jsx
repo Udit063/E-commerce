@@ -3,6 +3,11 @@ import {
   Button,
   Card,
   CardHeader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Table,
   TableBody,
@@ -11,7 +16,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteProductById, findProducts } from "../../store/Product/Action";
 
@@ -19,17 +24,33 @@ const ProductsTable = () => {
   const dispatch = useDispatch();
   //@ts-ignore
   const { products } = useSelector((store) => store);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   console.log("products", products);
 
-  const handleProductDelete = (productId) => {
-    //@ts-ignore
-    dispatch(deleteProductById(productId));
+  const handleDeleteClick = (productId, productTitle) => {
+    setProductToDelete({ id: productId, title: productTitle });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (productToDelete) {
+      //@ts-ignore
+      dispatch(deleteProductById(productToDelete.id));
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setProductToDelete(null);
   };
 
   useEffect(() => {
     const data = {
-      category: "t-shirts",
+      category: "",
       colors: [],
       sizes: [],
       minPrice: 0,
@@ -75,8 +96,9 @@ const ProductsTable = () => {
                   <TableCell align="left">{item.quantity}</TableCell>
                   <TableCell align="left">
                     <Button
-                      onClick={() => handleProductDelete(item.id)}
+                      onClick={() => handleDeleteClick(item.id, item.title)}
                       variant="outlined"
+                      color="error"
                     >
                       Delete
                     </Button>
@@ -87,6 +109,37 @@ const ProductsTable = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Confirm Delete Product
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete "{productToDelete?.title}"? This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            autoFocus
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -176,7 +176,7 @@ export const ProductDetails = () => {
   const combinedReviews = getCombinedReviews();
 
   return (
-    <div className="bg-white lg:px-20">
+    <div className="bg-white lg:px-12">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol
@@ -325,7 +325,12 @@ export const ProductDetails = () => {
                 <Button
                   onClick={handleAddToCart}
                   variant="contained"
-                  sx={{ px: "2rem", py: "1rem", bgcolor: "#9155fd" }}
+                  sx={{
+                    px: "2rem",
+                    py: "1rem",
+                    my: "1rem",
+                    bgcolor: "#9155fd",
+                  }}
                 >
                   Add To Cart
                 </Button>

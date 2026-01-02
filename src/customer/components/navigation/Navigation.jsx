@@ -224,14 +224,57 @@ export default function Navigation() {
                 {/* </div> */}
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  <div className="flow-root">
-                    <a
-                      href="/"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Sign in
-                    </a>
-                  </div>
+                  {auth.user?.firstName ? (
+                    <>
+                      {auth.user?.role === "ROLE_ADMIN" && (
+                        <div className="flow-root">
+                          <button
+                            onClick={() => {
+                              navigate("/admin");
+                              setOpen(false);
+                            }}
+                            className="-m-2 block p-2 font-medium text-gray-900 w-full text-left"
+                          >
+                            Dashboard
+                          </button>
+                        </div>
+                      )}
+                      <div className="flow-root">
+                        <button
+                          onClick={() => {
+                            navigate("/account/order");
+                            setOpen(false);
+                          }}
+                          className="-m-2 block p-2 font-medium text-gray-900 w-full text-left"
+                        >
+                          My Orders
+                        </button>
+                      </div>
+                      <div className="flow-root">
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setOpen(false);
+                          }}
+                          className="-m-2 block p-2 font-medium text-gray-900 w-full text-left"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flow-root">
+                      <button
+                        onClick={() => {
+                          handleOpen();
+                          setOpen(false);
+                        }}
+                        className="-m-2 block p-2 font-medium text-gray-900 w-full text-left"
+                      >
+                        Sign in
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-gray-200 px-4 py-6">
@@ -450,6 +493,11 @@ export default function Navigation() {
                         }}
                       >
                         {/* <MenuItem>Profile</MenuItem> */}
+                        {auth.user?.role === "ROLE_ADMIN" && (
+                          <MenuItem onClick={() => navigate("/admin")}>
+                            Dashboard
+                          </MenuItem>
+                        )}
                         <MenuItem onClick={() => navigate("/account/order")}>
                           My Orders
                         </MenuItem>
