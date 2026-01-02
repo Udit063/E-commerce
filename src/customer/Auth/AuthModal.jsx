@@ -17,9 +17,8 @@ const style = {
 
 const AuthModal = ({ open, handleClose }) => {
   const location = useLocation();
-  // Default to login form unless on register page
-  const isLoginPage =
-    location.pathname === "/login" || location.pathname !== "/register";
+  // Show register form if on /register, otherwise show login form
+  const isRegisterPage = location.pathname === "/register";
   return (
     <div>
       <Modal
@@ -28,7 +27,9 @@ const AuthModal = ({ open, handleClose }) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>{isLoginPage ? <LoginForm /> : <RegisterForm />}</Box>
+        <Box sx={style}>
+          {isRegisterPage ? <RegisterForm /> : <LoginForm />}
+        </Box>
       </Modal>
     </div>
   );
