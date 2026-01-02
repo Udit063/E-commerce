@@ -120,7 +120,10 @@ export const ProductDetails = () => {
 
   // Calculate rating statistics
   const calculateRatingStats = () => {
-    const ratings = products.ratings || [];
+    const product = products.product;
+
+    const ratings = Array.isArray(product?.ratings) ? product.ratings : [];
+
     if (ratings.length === 0) {
       return {
         average: 0,
@@ -133,9 +136,9 @@ export const ProductDetails = () => {
     let sum = 0;
 
     ratings.forEach((item) => {
-      const rating = Math.round(item.rating);
+      const rating = Math.round(item.rating || 0);
       distribution[rating] = (distribution[rating] || 0) + 1;
-      sum += item.rating;
+      sum += item.rating || 0;
     });
 
     return {
@@ -155,10 +158,13 @@ export const ProductDetails = () => {
 
   // Combine ratings and reviews by matching user
   const getCombinedReviews = () => {
-    const ratings = products.ratings || [];
-    const reviews = products.reviews || [];
+    const product = products.product;
+    if (!product) return [];
 
-    return reviews.map((review) => {
+    const ratings = product.ratings || [];
+    const reviews = product.reviews || [];
+
+    return reviews?.map((review) => {
       const userRating = ratings.find((r) => r.user.id === review.user.id);
       return {
         ...review,
@@ -375,7 +381,7 @@ export const ProductDetails = () => {
                   {products.reviewsLoading ? (
                     <p className="text-center py-5">Loading reviews...</p>
                   ) : combinedReviews.length > 0 ? (
-                    combinedReviews.map((review) => (
+                    combinedReviews?.map((review) => (
                       <ProductReviewCard key={review.id} review={review} />
                     ))
                   ) : (
