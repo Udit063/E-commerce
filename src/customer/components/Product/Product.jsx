@@ -19,6 +19,7 @@ import {
   MinusIcon,
   PlusIcon,
   Squares2X2Icon,
+  ListBulletIcon,
 } from "@heroicons/react/20/solid";
 import { mens_kurta } from "../../../data/Men/men_kurta";
 import ProductCard from "./ProductCard";
@@ -37,8 +38,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../../store/Product/Action";
 
 const sortOptions = [
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Price: Low to High", value: "price_low" },
+  { name: "Price: High to Low", value: "price_high" },
 ];
 
 function classNames(...classes) {
@@ -47,6 +48,7 @@ function classNames(...classes) {
 
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
   const location = useLocation();
   const navigate = useNavigate();
   const param = useParams();
@@ -97,11 +99,44 @@ export default function Product() {
     const currentValue = searchParams.get(sectionId);
     const newValue = e.target.value;
 
+    // If clicking the already selected radio, deselect it
     if (currentValue !== null && currentValue === newValue) {
       searchParams.delete(sectionId);
     } else {
       searchParams.set(sectionId, newValue);
     }
+
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  };
+
+  const handleRadioLabelClick = (e, value, sectionId) => {
+    const searchParams = new URLSearchParams(location.search);
+    const currentValue = searchParams.get(sectionId);
+
+    // If clicking the already selected radio label, deselect it
+    if (currentValue === value) {
+      e.preventDefault();
+      e.stopPropagation();
+      searchParams.delete(sectionId);
+      const query = searchParams.toString();
+      navigate({ search: `?${query}` });
+    }
+  };
+
+  const handleSortChange = (sortValue) => {
+    const searchParams = new URLSearchParams(location.search);
+    const currentSort = searchParams.get("sort");
+
+    // If clicking the same sort option, remove it (optional behavior)
+    if (currentSort === sortValue) {
+      searchParams.delete("sort");
+    } else {
+      searchParams.set("sort", sortValue);
+    }
+
+    // Reset to first page when sorting changes
+    searchParams.set("pageNumber", "0");
 
     const query = searchParams.toString();
     navigate({ search: `?${query}` });
@@ -122,7 +157,7 @@ export default function Product() {
       pageNumber: pageNumber || 0,
       pageSize: 10,
       stock: stock || "",
-    };    
+    };
 
     //@ts-ignore
     dispatch(findProducts(data));
@@ -271,6 +306,13 @@ export default function Product() {
                                 value={option.value}
                                 control={<Radio />}
                                 label={option.label}
+                                onClick={(e) =>
+                                  handleRadioLabelClick(
+                                    e,
+                                    option.value,
+                                    section.id
+                                  )
+                                }
                               />
                             ))}
                           </RadioGroup>
@@ -293,7 +335,10 @@ export default function Product() {
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
                 <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                  Sort
+                  {sortValue
+                    ? sortOptions.find((opt) => opt.value === sortValue)
+                        ?.name || "Sort"
+                    : "Sort"}
                   <ChevronDownIcon
                     aria-hidden="true"
                     className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -305,32 +350,57 @@ export default function Product() {
                   className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
                   <div className="py-1">
-                    {sortOptions.map((option) => (
-                      <MenuItem key={option.name}>
-                        <a
-                          href={option.href}
-                          className={classNames(
-                            option.current
-                              ? "font-medium text-gray-900"
-                              : "text-gray-500",
-                            "block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden"
-                          )}
-                        >
-                          {option.name}
-                        </a>
-                      </MenuItem>
-                    ))}
+                    {sortOptions.map((option) => {
+                      const isSelected = sortValue === option.value;
+                      return (
+                        <MenuItem key={option.name}>
+                          <button
+                            type="button"
+                            onClick={() => handleSortChange(option.value)}
+                            className={classNames(
+                              isSelected
+                                ? "font-medium text-gray-900"
+                                : "text-gray-500",
+                              "block w-full text-left px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden"
+                            )}
+                          >
+                            {option.name}
+                          </button>
+                        </MenuItem>
+                      );
+                    })}
                   </div>
                 </MenuItems>
               </Menu>
 
-              <button
-                type="button"
-                className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7"
-              >
-                <span className="sr-only">View grid</span>
-                <Squares2X2Icon aria-hidden="true" className="size-5" />
-              </button>
+              <div className="flex items-center ml-5 sm:ml-7">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("grid")}
+                  className={`-m-2 p-2 ${
+                    viewMode === "grid"
+                      ? "text-gray-900"
+                      : "text-gray-400 hover:text-gray-500"
+                  }`}
+                  title="Grid view"
+                >
+                  <span className="sr-only">View grid</span>
+                  <Squares2X2Icon aria-hidden="true" className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`-m-2 p-2 ${
+                    viewMode === "list"
+                      ? "text-gray-900"
+                      : "text-gray-400 hover:text-gray-500"
+                  }`}
+                  title="List view"
+                >
+                  <span className="sr-only">View list</span>
+                  <ListBulletIcon aria-hidden="true" className="size-5" />
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(true)}
@@ -457,6 +527,13 @@ export default function Product() {
                                   value={option.value}
                                   control={<Radio />}
                                   label={option.label}
+                                  onClick={(e) =>
+                                    handleRadioLabelClick(
+                                      e,
+                                      option.value,
+                                      section.id
+                                    )
+                                  }
                                 />
                               ))}
                             </RadioGroup>
@@ -470,12 +547,54 @@ export default function Product() {
 
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
-                <div className="flex flex-wrap justify-center bg-white py-5">
-                  {products.products?.content &&
-                    products.products?.content.map((item) => (
-                      <ProductCard product={item} />
+                {products.loading ? (
+                  <div className="flex justify-center items-center py-20">
+                    <p className="text-lg text-gray-500">Loading products...</p>
+                  </div>
+                ) : products.products?.content &&
+                  products.products.content.length > 0 ? (
+                  <div
+                    className={`bg-white py-5 ${
+                      viewMode === "grid"
+                        ? "flex flex-wrap justify-start"
+                        : "flex flex-col space-y-4"
+                    }`}
+                  >
+                    {products.products.content.map((item) => (
+                      <ProductCard
+                        key={item.id}
+                        product={item}
+                        viewMode={viewMode}
+                      />
                     ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-center items-center py-20">
+                    <div className="text-center">
+                      <svg
+                        className="mx-auto h-24 w-24 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                        />
+                      </svg>
+                      <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                        No products found
+                      </h3>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Try adjusting your filters or search criteria to find
+                        what you're looking for.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </section>

@@ -92,10 +92,10 @@ export const navigation = {
             { name: "Mens Kurtas", id: "mens_kurta" },
             { name: "Shirt", id: "shirt" },
             { name: "Men Jeans", id: "men_jeans" },
-            { name: "Sweaters", id: "#" },
+            { name: "Sweaters", id: "sweaters" },
             { name: "T-Shirts", id: "t-shirts" },
-            { name: "Jackets", id: "#" },
-            { name: "Activewear", id: "#" },
+            { name: "Jackets", id: "jackets" },
+            { name: "Activewear", id: "activewear" },
           ],
         },
         // {
