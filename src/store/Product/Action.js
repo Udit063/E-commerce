@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { api } from "../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
   FIND_PRODUCTS_REQUEST,
   FIND_PRODUCTS_SUCCESS,
@@ -51,8 +52,10 @@ export const findProducts = (reqData) => async (dispatch) => {
     console.log("product data: ", data);
 
     dispatch({ type: FIND_PRODUCTS_SUCCESS, payload: data });
+    toast.success("Products loaded successfully");
   } catch (error) {
     dispatch({ type: FIND_PRODUCTS_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to load products");
   }
 };
 
@@ -64,6 +67,9 @@ export const findProductById = (reqData) => async (dispatch) => {
     dispatch({ type: FIND_PRODUCT_BY_ID_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: FIND_PRODUCT_BY_ID_FAILURE, payload: error.message });
+    toast.error(
+      error.response?.data?.message || "Failed to load product details"
+    );
   }
 };
 
@@ -81,6 +87,9 @@ export const getProductsByCategory = (categoryName) => async (dispatch) => {
       type: GET_PRODUCTS_BY_CATEGORY_FAILURE,
       payload: error.message,
     });
+    toast.error(
+      error.response?.data?.message || "Failed to load products by category"
+    );
   }
 };
 
@@ -89,8 +98,10 @@ export const createProduct = (product) => async (dispatch) => {
     dispatch({ type: CREATE_PRODUCT_REQUEST });
     const { data } = await api.post(`/api/admin/products/`, product);
     dispatch({ type: CREATE_PRODUCT_SUCCESS, payload: data });
+    toast.success("Product created successfully");
   } catch (error) {
     dispatch({ type: CREATE_PRODUCT_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to create product");
   }
 };
 
@@ -101,13 +112,16 @@ export const deleteProductById = (productId) => async (dispatch) => {
       `/api/admin/products/${productId}/delete`
     );
     dispatch({ type: DELETE_PRODUCT_SUCCESS, payload: productId });
+    toast.success("Product deleted successfully");
   } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Product cannot be deleted because it is used in orders";
     dispatch({
       type: DELETE_PRODUCT_FAILURE,
-      payload:
-        error.response?.data?.message ||
-        "Product cannot be deleted because it is used in orders",
+      payload: errorMessage,
     });
+    toast.error(errorMessage);
   }
 };
 
@@ -118,15 +132,18 @@ export const createRating = (reqData) => async (dispatch) => {
     const { data } = await api.post("/api/ratings/create", reqData);
     console.log("rating created: ", data);
     dispatch({ type: CREATE_RATING_SUCCESS, payload: data });
+    toast.success("Rating submitted successfully");
     return { success: true, data };
   } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
     dispatch({
       type: CREATE_RATING_FAILURE,
-      payload: error.response?.data?.message || error.message,
+      payload: errorMessage,
     });
+    toast.error(errorMessage);
     return {
       success: false,
-      error: error.response?.data?.message || error.message,
+      error: errorMessage,
     };
   }
 };
@@ -138,15 +155,18 @@ export const createReview = (reqData) => async (dispatch) => {
     const { data } = await api.post("/api/reviews/create", reqData);
     console.log("review created: ", data);
     dispatch({ type: CREATE_REVIEW_SUCCESS, payload: data });
+    toast.success("Review submitted successfully");
     return { success: true, data };
   } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
     dispatch({
       type: CREATE_REVIEW_FAILURE,
-      payload: error.response?.data?.message || error.message,
+      payload: errorMessage,
     });
+    toast.error(errorMessage);
     return {
       success: false,
-      error: error.response?.data?.message || error.message,
+      error: errorMessage,
     };
   }
 };
@@ -163,6 +183,9 @@ export const getProductRatings = (productId) => async (dispatch) => {
       type: GET_PRODUCT_RATINGS_FAILURE,
       payload: error.response?.data?.message || error.message,
     });
+    toast.error(
+      error.response?.data?.message || "Failed to load product ratings"
+    );
   }
 };
 
@@ -178,5 +201,8 @@ export const getProductReviews = (productId) => async (dispatch) => {
       type: GET_PRODUCT_REVIEWS_FAILURE,
       payload: error.response?.data?.message || error.message,
     });
+    toast.error(
+      error.response?.data?.message || "Failed to load product reviews"
+    );
   }
 };

@@ -1,4 +1,5 @@
 import { api } from "../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
   GET_USER_FAILURE,
   GET_USER_REQUEST,
@@ -28,8 +29,12 @@ export const register = (userData) => async (dispatch) => {
     console.log("user ", user);
 
     dispatch(registerSuccess(user.jwt));
+    toast.success("Registration successful! Welcome!");
   } catch (error) {
     dispatch(registerFailure(error.message));
+    toast.error(
+      error.response?.data?.message || "Registration failed. Please try again."
+    );
   }
 };
 
@@ -48,8 +53,13 @@ export const login = (userData) => async (dispatch) => {
     }
     console.log("user ", user);
     dispatch(loginSuccess(user.jwt));
+    toast.success("Login successful! Welcome back!");
   } catch (error) {
     dispatch(loginFailure(error.message));
+    toast.error(
+      error.response?.data?.message ||
+        "Login failed. Please check your credentials."
+    );
   }
 };
 
@@ -68,6 +78,7 @@ export const getUser = (jwt) => async (dispatch) => {
     dispatch(getUserSuccess(user));
   } catch (error) {
     dispatch(getUserFailure(error.message));
+    toast.error(error.response?.data?.message || "Failed to load user profile");
   }
 };
 
@@ -75,4 +86,5 @@ export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT, payload: null });
   // localStorage.removeItem("jwt");
   localStorage.clear();
+  toast.success("Logged out successfully");
 };

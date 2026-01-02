@@ -4,19 +4,22 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 500,
-  bgcolor: 'background.paper',
-  outline: 'none',
+  bgcolor: "background.paper",
+  outline: "none",
   boxShadow: 24,
   p: 4,
 };
 
-const AuthModal = ({open, handleClose}) => {
+const AuthModal = ({ open, handleClose }) => {
   const location = useLocation();
+  // Default to login form unless on register page
+  const isLoginPage =
+    location.pathname === "/login" || location.pathname !== "/register";
   return (
     <div>
       <Modal
@@ -25,9 +28,7 @@ const AuthModal = ({open, handleClose}) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          {location.pathname === "/login" ? <LoginForm /> : <RegisterForm />}
-        </Box>
+        <Box sx={style}>{isLoginPage ? <LoginForm /> : <RegisterForm />}</Box>
       </Modal>
     </div>
   );

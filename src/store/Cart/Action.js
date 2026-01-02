@@ -1,5 +1,6 @@
 //@ts-nocheck
 import { api } from "../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
   ADD_ITEM_TO_CART_FAILURE,
   ADD_ITEM_TO_CART_REQUEST,
@@ -21,9 +22,9 @@ export const getCart = () => async (dispatch) => {
     const { data } = await api.get("/api/cart/");
     dispatch({ type: GET_CART_SUCCESS, payload: data });
     console.log("cart data:", data);
-    
   } catch (error) {
     dispatch({ type: GET_CART_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to load cart");
   }
 };
 
@@ -32,8 +33,10 @@ export const addItemToCart = (reqData) => async (dispatch) => {
   try {
     const { data } = await api.put("/api/cart/add", reqData);
     dispatch({ type: ADD_ITEM_TO_CART_SUCCESS, payload: data });
+    toast.success("Item added to cart successfully");
   } catch (error) {
     dispatch({ type: ADD_ITEM_TO_CART_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to add item to cart");
   }
 };
 
@@ -42,8 +45,12 @@ export const removeCartItem = (cartItemId) => async (dispatch) => {
   try {
     const { data } = await api.delete(`/api/cart_item/${cartItemId}`);
     dispatch({ type: REMOVE_CART_ITEM_SUCCESS, payload: data });
+    toast.success("Item removed from cart");
   } catch (error) {
     dispatch({ type: REMOVE_CART_ITEM_FAILURE, payload: error.message });
+    toast.error(
+      error.response?.data?.message || "Failed to remove item from cart"
+    );
   }
 };
 
@@ -55,9 +62,11 @@ export const updateCartItem = (reqData) => async (dispatch) => {
       reqData.data
     );
     console.log("cart123data: ", data);
-    
+
     dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data });
+    toast.success("Cart updated successfully");
   } catch (error) {
     dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to update cart");
   }
 };

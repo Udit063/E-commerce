@@ -5,6 +5,7 @@ import "./App.css";
 import AdminRoutes from "./Routers/AdminRoutes";
 import CustomerRoutes from "./Routers/CustomerRoutes";
 import { getUser } from "./store/Auth/Action";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,12 +22,12 @@ function App() {
     }
   }, [jwt]);
   return (
-    <div>
+    <AuthProvider>
       <Routes>
         <Route path="/*" element={<CustomerRoutes />}></Route>
         <Route path="/admin/*" element={<AdminRoutes />}></Route>
       </Routes>
-    </div>
+    </AuthProvider>
   );
 }
 

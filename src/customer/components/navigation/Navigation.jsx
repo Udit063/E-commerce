@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "../../Auth/AuthModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser, logout } from "../../../store/Auth/Action";
+import { useAuth } from "../../../context/AuthContext";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -24,12 +25,13 @@ export default function Navigation() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const jwt = localStorage.getItem("jwt");
   const dispatch = useDispatch();
   const { auth } = useSelector((store) => store);
+  const { openAuthModal, handleOpenAuthModal, handleCloseAuthModal } =
+    useAuth();
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -40,11 +42,11 @@ export default function Navigation() {
   };
 
   const handleOpen = () => {
-    setOpenAuthModal(true);
+    handleOpenAuthModal();
   };
 
   const handleClose = () => {
-    setOpenAuthModal(false);
+    handleCloseAuthModal();
   };
 
   const handleCategoryClick = (category, section, item, close) => {
@@ -70,7 +72,7 @@ export default function Navigation() {
     if (location.pathname === "/login" || location.pathname === "/register") {
       navigate(-1);
     }
-  }, [auth.user]);
+  }, [auth.user, handleClose]);
 
   console.log("jkdvnvd", auth);
 

@@ -1,4 +1,5 @@
 import { api } from "../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
   CREATE_ORDER_FAILURE,
   CREATE_ORDER_REQUEST,
@@ -22,11 +23,13 @@ export const createOrder = (reqData) => async (dispatch) => {
     }
     console.log("created order: ", data);
     dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
+    toast.success("Order created successfully");
   } catch (error) {
     dispatch({
       type: CREATE_ORDER_FAILURE,
       payload: error.message,
     });
+    toast.error(error.response?.data?.message || "Failed to create order");
   }
 };
 
@@ -42,6 +45,9 @@ export const getOrderById = (orderId) => async (dispatch) => {
       type: GET_ORDER_BY_ID_FAILURE,
       payload: error.message,
     });
+    toast.error(
+      error.response?.data?.message || "Failed to load order details"
+    );
   }
 };
 
@@ -56,5 +62,6 @@ export const getUserOrders = () => async (dispatch) => {
       type: GET_USER_ORDERS_FAILURE,
       payload: error.message,
     });
+    toast.error(error.response?.data?.message || "Failed to load your orders");
   }
 };
