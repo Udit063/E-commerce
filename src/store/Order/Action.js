@@ -1,4 +1,5 @@
 import { api } from "../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
   CREATE_ORDER_FAILURE,
   CREATE_ORDER_REQUEST,
@@ -10,6 +11,7 @@ import {
   GET_USER_ORDERS_REQUEST,
   GET_USER_ORDERS_SUCCESS,
 } from "./ActionType";
+import { getCart, clearCart } from "../Cart/Action";
 
 export const createOrder = (reqData) => async (dispatch) => {
   dispatch({ type: CREATE_ORDER_REQUEST });
@@ -22,11 +24,20 @@ export const createOrder = (reqData) => async (dispatch) => {
     }
     console.log("created order: ", data);
     dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
+    toast.success("Order created successfully");
+
+    // Clear cart immediately after order creation
+    dispatch(clearCart());
+    // Wait a bit for backend to process, then refresh cart to ensure it's empty
+    setTimeout(() => {
+      dispatch(getCart());
+    }, 500);
   } catch (error) {
     dispatch({
       type: CREATE_ORDER_FAILURE,
       payload: error.message,
     });
+    toast.error(error.response?.data?.message || "Failed to create order");
   }
 };
 
@@ -42,6 +53,9 @@ export const getOrderById = (orderId) => async (dispatch) => {
       type: GET_ORDER_BY_ID_FAILURE,
       payload: error.message,
     });
+    toast.error(
+      error.response?.data?.message || "Failed to load order details"
+    );
   }
 };
 
@@ -56,5 +70,6 @@ export const getUserOrders = () => async (dispatch) => {
       type: GET_USER_ORDERS_FAILURE,
       payload: error.message,
     });
+    toast.error(error.response?.data?.message || "Failed to load your orders");
   }
 };

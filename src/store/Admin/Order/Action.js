@@ -1,7 +1,8 @@
 import { api } from "../../../config/apiConfig";
+import { toast } from "react-toastify";
 import {
-    CANCELLED_ORDER_FAILURE,
-    CANCELLED_ORDER_REQUEST,
+  CANCELLED_ORDER_FAILURE,
+  CANCELLED_ORDER_REQUEST,
   CANCELLED_ORDER_SUCCESS,
   CONFIRMED_ORDER_FAILURE,
   CONFIRMED_ORDER_REQUEST,
@@ -18,6 +19,9 @@ import {
   SHIP_ORDER_FAILURE,
   SHIP_ORDER_REQUEST,
   SHIP_ORDER_SUCCESS,
+  GET_ORDER_STATISTICS_REQUEST,
+  GET_ORDER_STATISTICS_SUCCESS,
+  GET_ORDER_STATISTICS_FAILURE,
 } from "./ActionType";
 
 export const getOrders = () => {
@@ -28,6 +32,7 @@ export const getOrders = () => {
       dispatch({ type: GET_ORDERS_SUCCESS, payload: response.data });
     } catch (error) {
       dispatch({ type: GET_ORDERS_FAILURE, payload: error.message });
+      toast.error(error.response?.data?.message || "Failed to load orders");
     }
   };
 };
@@ -38,8 +43,10 @@ export const confirmOrder = (orderId) => async (dispatch) => {
     const response = await api.put(`/api/admin/orders/${orderId}/confirmed`);
     const data = response.data;
     dispatch({ type: CONFIRMED_ORDER_SUCCESS, payload: data });
+    toast.success("Order confirmed successfully");
   } catch (error) {
     dispatch({ type: CONFIRMED_ORDER_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to confirm order");
   }
 };
 
@@ -48,8 +55,10 @@ export const shipOrder = (orderId) => async (dispatch) => {
   try {
     const { data } = await api.put(`/api/admin/orders/${orderId}/ship`);
     dispatch({ type: SHIP_ORDER_SUCCESS, payload: data });
+    toast.success("Order shipped successfully");
   } catch (error) {
     dispatch({ type: SHIP_ORDER_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to ship order");
   }
 };
 
@@ -59,8 +68,10 @@ export const deliverOrder = (orderId) => async (dispatch) => {
     const response = await api.put(`/api/admin/orders/${orderId}/deliver`);
     const data = response.data;
     dispatch({ type: DELIVERED_ORDER_SUCCESS, payload: data });
+    toast.success("Order delivered successfully");
   } catch (error) {
     dispatch({ type: DELIVERED_ORDER_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to deliver order");
   }
 };
 
@@ -81,7 +92,24 @@ export const deleteOrder = (orderId) => async (dispatch) => {
     const response = await api.delete(`/api/admin/orders/${orderId}/delete`);
     const data = response.data;
     dispatch({ type: DELETE_ORDER_SUCCESS, payload: data });
+    toast.success("Order deleted successfully");
   } catch (error) {
     dispatch({ type: DELETE_ORDER_FAILURE, payload: error.message });
+    toast.error(error.response?.data?.message || "Failed to delete order");
+  }
+};
+
+export const getOrderStatistics = () => async (dispatch) => {
+  dispatch({ type: GET_ORDER_STATISTICS_REQUEST });
+  try {
+    const { data } = await api.get("/api/admin/orders/statistics");
+    dispatch({ type: GET_ORDER_STATISTICS_SUCCESS, payload: data });
+    return { success: true, data };
+  } catch (error) {
+    dispatch({ type: GET_ORDER_STATISTICS_FAILURE, payload: error.message });
+    toast.error(
+      error.response?.data?.message || "Failed to load order statistics"
+    );
+    return { success: false, error };
   }
 };

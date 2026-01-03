@@ -80,15 +80,70 @@ function classNames(...classes) {
 }
 
 export const ProductDetails = () => {
-  const [selectedSize, setSelectedSize] = useState("M");
+  const [selectedSize, setSelectedSize] = useState("");
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
   const { products } = useSelector((store) => store);
 
+  // Sort sizes in standard order: S, M, L, XL, XXL, etc.
+  const sortSizes = (sizes) => {
+    if (!sizes || sizes.length === 0) return [];
+
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+    return [...sizes].sort((a, b) => {
+      const indexA = sizeOrder.indexOf(a.name.toUpperCase());
+      const indexB = sizeOrder.indexOf(b.name.toUpperCase());
+
+      // If both sizes are in the order array, sort by their position
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      // If only one is in the order array, prioritize it
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      // If neither is in the order array, sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  // Get sorted sizes
+  const sortedSizes = products.product?.sizes
+    ? sortSizes(products.product.sizes)
+    : [];
+
+  // Get available quantity for selected size
+  const getAvailableQuantity = () => {
+    if (!products.product?.sizes || !selectedSize) return 0;
+    const sizeObj = products.product.sizes.find((s) => s.name === selectedSize);
+    return sizeObj?.quantity || 0;
+  };
+
+  const availableQuantity = getAvailableQuantity();
+  const isOutOfStock = availableQuantity === 0;
+
+  // Set initial size when product loads (select first available size)
+  useEffect(() => {
+    if (sortedSizes.length > 0 && !selectedSize) {
+      // Find first available size, or just use the first one
+      const firstAvailable =
+        sortedSizes.find((s) => s.quantity > 0) || sortedSizes[0];
+      if (firstAvailable) {
+        setSelectedSize(firstAvailable.name);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedSizes]);
+
   const handleAddToCart = () => {
-    const data = { productId: params.productId, size: selectedSize };
-    console.log("cart data: ", data);
+    if (isOutOfStock) return;
+
+    const data = {
+      productId: Number(params.productId),
+      size: selectedSize,
+      quantity: 1, // Always add 1 item, user can increase quantity in cart
+    };
 
     dispatch(addItemToCart(data));
     navigate("/cart");
@@ -120,7 +175,10 @@ export const ProductDetails = () => {
 
   // Calculate rating statistics
   const calculateRatingStats = () => {
-    const ratings = products.ratings || [];
+    const product = products.product;
+
+    const ratings = Array.isArray(product?.ratings) ? product.ratings : [];
+
     if (ratings.length === 0) {
       return {
         average: 0,
@@ -133,9 +191,9 @@ export const ProductDetails = () => {
     let sum = 0;
 
     ratings.forEach((item) => {
-      const rating = Math.round(item.rating);
+      const rating = Math.round(item.rating || 0);
       distribution[rating] = (distribution[rating] || 0) + 1;
-      sum += item.rating;
+      sum += item.rating || 0;
     });
 
     return {
@@ -155,10 +213,13 @@ export const ProductDetails = () => {
 
   // Combine ratings and reviews by matching user
   const getCombinedReviews = () => {
-    const ratings = products.ratings || [];
-    const reviews = products.reviews || [];
+    const product = products.product;
+    if (!product) return [];
 
-    return reviews.map((review) => {
+    const ratings = product.ratings || [];
+    const reviews = product.reviews || [];
+
+    return reviews?.map((review) => {
       const userRating = ratings.find((r) => r.user.id === review.user.id);
       return {
         ...review,
@@ -170,7 +231,7 @@ export const ProductDetails = () => {
   const combinedReviews = getCombinedReviews();
 
   return (
-    <div className="bg-white lg:px-20">
+    <div className="bg-white lg:px-12">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol
@@ -288,40 +349,84 @@ export const ProductDetails = () => {
 
                   <fieldset aria-label="Choose a size" className="mt-4">
                     <div className="grid grid-cols-4 gap-3">
-                      {product.sizes.map((size) => (
-                        <label
-                          key={size.name}
-                          aria-label={size.name}
-                          className={`group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25 cursor-pointer ${
-                            selectedSize === size.name
-                              ? "ring-2 ring-indigo-600"
-                              : ""
-                          }`}
-                        >
-                          <input
-                            value={size.name}
-                            checked={selectedSize === size.name}
-                            name="size"
-                            type="radio"
-                            onChange={() => setSelectedSize(size.name)}
-                            disabled={!size.inStock}
-                            className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
-                          />
-                          <span className="text-sm font-medium text-gray-900 uppercase group-has-checked:text-white">
-                            {size.name}
-                          </span>
-                        </label>
-                      ))}
+                      {sortedSizes.map((size) => {
+                        const sizeQuantity = size.quantity || 0;
+                        const isSizeOutOfStock = sizeQuantity === 0;
+                        const isSelected = selectedSize === size.name;
+
+                        return (
+                          <label
+                            key={size.name}
+                            aria-label={size.name}
+                            className={`group relative flex flex-col items-center justify-center rounded-md border p-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 cursor-pointer ${
+                              isSizeOutOfStock
+                                ? "border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed"
+                                : isSelected
+                                ? "ring-2 ring-indigo-600 border-indigo-600 bg-white"
+                                : "border-gray-300 bg-white hover:border-indigo-300"
+                            }`}
+                          >
+                            <input
+                              value={size.name}
+                              checked={isSelected}
+                              name="size"
+                              type="radio"
+                              onChange={() =>
+                                !isSizeOutOfStock && setSelectedSize(size.name)
+                              }
+                              disabled={isSizeOutOfStock}
+                              className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
+                            />
+                            <span
+                              className={`text-sm font-medium uppercase ${
+                                isSelected ? "text-indigo-600" : "text-gray-900"
+                              }`}
+                            >
+                              {size.name}
+                            </span>
+                            {isSizeOutOfStock && (
+                              <span className="text-xs text-red-600 mt-1">
+                                Out of Stock
+                              </span>
+                            )}
+                          </label>
+                        );
+                      })}
                     </div>
                   </fieldset>
+
+                  {/* Stock Availability Display */}
+                  {selectedSize && (
+                    <div className="mt-6">
+                      {isOutOfStock ? (
+                        <span className="text-sm font-medium text-red-600">
+                          Out of Stock
+                        </span>
+                      ) : (
+                        <span className="text-sm text-gray-600">
+                          {availableQuantity} available in stock
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <Button
                   onClick={handleAddToCart}
+                  disabled={isOutOfStock || !selectedSize}
                   variant="contained"
-                  sx={{ px: "2rem", py: "1rem", bgcolor: "#9155fd" }}
+                  sx={{
+                    px: "2rem",
+                    py: "1rem",
+                    my: "1rem",
+                    bgcolor: "#9155fd",
+                    "&:disabled": {
+                      bgcolor: "#d1d5db",
+                      color: "#9ca3af",
+                    },
+                  }}
                 >
-                  Add To Cart
+                  {isOutOfStock ? "Out of Stock" : "Add To Cart"}
                 </Button>
               </form>
             </div>
@@ -375,7 +480,7 @@ export const ProductDetails = () => {
                   {products.reviewsLoading ? (
                     <p className="text-center py-5">Loading reviews...</p>
                   ) : combinedReviews.length > 0 ? (
-                    combinedReviews.map((review) => (
+                    combinedReviews?.map((review) => (
                       <ProductReviewCard key={review.id} review={review} />
                     ))
                   ) : (

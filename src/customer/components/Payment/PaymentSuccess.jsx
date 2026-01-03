@@ -28,9 +28,10 @@ const PaymentSuccess = () => {
     if (paymentId) {
       const data = { orderId, paymentId };
       dispatch(getOrderById(orderId));
+      // Update payment (cart clearing is handled in the action)
       dispatch(updatePayment(data));
     }
-  }, [orderId, paymentId]);
+  }, [orderId, paymentId, dispatch]);
 
   return (
     <div className="px-2 lg:px-36">
@@ -69,7 +70,7 @@ const PaymentSuccess = () => {
                     <span>Size: {item.size}</span>
                   </div>
                   <p>Seller: {item.product.brand}</p>
-                  <p>₹ {item.price}</p>
+                  <p>₹ {item.discountedPrice}</p>
                 </div>
               </div>
             </Grid>

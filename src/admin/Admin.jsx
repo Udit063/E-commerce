@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {
   AccountCircle,
   AddCircle,
@@ -5,9 +6,12 @@ import {
   Dashboard,
   Dvr,
   PeopleAlt,
+  ArrowBack,
+  Logout,
 } from "@mui/icons-material";
 import {
   Box,
+  Button,
   CssBaseline,
   Drawer,
   List,
@@ -21,6 +25,8 @@ import {
 import { useMediaQuery } from "@mui/system";
 import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/Auth/Action";
 import AdminDashboard from "./components/AdminDashboard";
 import CreateProductForm from "./components/CreateProductForm";
 import CustomersTable from "./components/CustomersTable";
@@ -40,6 +46,16 @@ const Admin = () => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleGoBackToApp = () => {
+    navigate("/");
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
   const drawer = (
     <Box
@@ -68,11 +84,19 @@ const Admin = () => {
       </List>
       <List>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleGoBackToApp}>
             <ListItemIcon>
-              <AccountCircle />
+              <ArrowBack />
             </ListItemIcon>
-            <ListItemText>Account</ListItemText>
+            <ListItemText>Go Back to App</ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText>Logout</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
@@ -82,7 +106,9 @@ const Admin = () => {
     <div>
       <div className="flex h-[100vh] overflow-hidden">
         <CssBaseline />
-        <div className="w-[15%] border border-r-gray-300 h-full sticky top-0">{drawer}</div>
+        <div className="w-[15%] border border-r-gray-300 h-full sticky top-0">
+          {drawer}
+        </div>
         <div className="w-[85%] h-full overflow-y-auto">
           <Routes>
             <Route path="/" element={<AdminDashboard />} />

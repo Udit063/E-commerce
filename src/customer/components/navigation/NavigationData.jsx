@@ -92,10 +92,10 @@ export const navigation = {
             { name: "Mens Kurtas", id: "mens_kurta" },
             { name: "Shirt", id: "shirt" },
             { name: "Men Jeans", id: "men_jeans" },
-            { name: "Sweaters", id: "#" },
+            { name: "Sweaters", id: "sweaters" },
             { name: "T-Shirts", id: "t-shirts" },
-            { name: "Jackets", id: "#" },
-            { name: "Activewear", id: "#" },
+            { name: "Jackets", id: "jackets" },
+            { name: "Activewear", id: "activewear" },
           ],
         },
         // {
@@ -120,6 +120,42 @@ export const navigation = {
         //     { name: "My Way", id: "#" },
         //   ],
         // },
+      ],
+    },
+    {
+      id: "kids",
+      name: "Kids",
+      featured: [
+        {
+          name: "New Arrivals",
+          href: "/",
+          imageSrc:
+            "https://rukminim2.flixcart.com/image/832/832/xif0q/shopsy-kids-apparel-combo/j/z/0/5-6-years-cpby0096-carrydreams-original-imahayr6rbvsf6g5.jpeg?q=70&crop=false",
+          imageAlt: "Kids clothing collection with colorful and fun designs.",
+        },
+        {
+          name: "Playwear",
+          href: "/",
+          imageSrc:
+            "https://rukminim2.flixcart.com/image/832/832/xif0q/bodysuit-sleepsuit/w/i/e/0-6-9-months-gobs20-2465-white-mellange-babygo-3-original-imah3ckjwe875ftm.jpeg?q=70&crop=false",
+          imageAlt: "Comfortable and durable kids playwear in various sizes.",
+        },
+      ],
+      sections: [
+        {
+          id: "clothing",
+          name: "Clothing",
+          items: [
+            { name: "T-Shirts", id: "t-shirts" },
+            { name: "Shirts", id: "shirt" },
+            { name: "Dresses", id: "women_dress" },
+            { name: "Jeans", id: "men_jeans" },
+            { name: "Shorts", id: "shorts" },
+            { name: "Jackets", id: "jackets" },
+            { name: "Sweaters", id: "sweaters" },
+            { name: "Activewear", id: "activewear" },
+          ],
+        },
       ],
     },
   ],

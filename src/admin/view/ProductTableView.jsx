@@ -22,7 +22,7 @@ const ProductTableView = () => {
 
   useEffect(() => {
     const data = {
-      category: "mens_kurta",
+      category: "",
       colors: [],
       sizes: [],
       minPrice: 0,

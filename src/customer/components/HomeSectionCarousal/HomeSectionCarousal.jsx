@@ -1,10 +1,12 @@
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AliceCarousel from "react-alice-carousel";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 
-const HomeSectionCarousal = ({ data, sectionName }) => {
+const HomeSectionCarousal = ({ data, sectionName, route }) => {
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   const responsive = {
     0: { items: 1 },
@@ -32,9 +34,17 @@ const HomeSectionCarousal = ({ data, sectionName }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-extrabold text-gray-800 py-5">
-        {sectionName}
-      </h2>
+      <div className="flex items-center justify-between py-5">
+        <h2 className="text-2xl font-extrabold text-gray-800">{sectionName}</h2>
+        {route && (
+          <button
+            onClick={() => navigate(route)}
+            className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+          >
+            See All →
+          </button>
+        )}
+      </div>
       <div className="relative p-5">
         <AliceCarousel
           ref={(el) => setMainRef(el)}
