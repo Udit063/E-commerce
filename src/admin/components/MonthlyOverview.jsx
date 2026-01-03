@@ -1,7 +1,6 @@
 import {
   AccountCircle,
   AttachMoney,
-  MoreVert,
   SettingsCell,
   TrendingUp,
 } from "@mui/icons-material";
@@ -75,11 +74,6 @@ const MonthlyOverview = () => {
     <Card>
       <CardHeader
         title="Monthly Overview"
-        action={
-          <IconButton size="small">
-            <MoreVert />
-          </IconButton>
-        }
         subheader={
           <Typography variant="body2">
             <Box component="span" sx={{ fontWeight: 600 }}>

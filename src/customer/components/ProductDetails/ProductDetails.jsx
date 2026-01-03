@@ -81,7 +81,6 @@ function classNames(...classes) {
 
 export const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState("");
-  const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
@@ -124,13 +123,6 @@ export const ProductDetails = () => {
   const availableQuantity = getAvailableQuantity();
   const isOutOfStock = availableQuantity === 0;
 
-  // Reset quantity when size changes
-  useEffect(() => {
-    if (selectedSize) {
-      setQuantity(1);
-    }
-  }, [selectedSize]);
-
   // Set initial size when product loads (select first available size)
   useEffect(() => {
     if (sortedSizes.length > 0 && !selectedSize) {
@@ -144,21 +136,14 @@ export const ProductDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortedSizes]);
 
-  const handleQuantityChange = (change) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1 && newQuantity <= availableQuantity) {
-      setQuantity(newQuantity);
-    }
-  };
-
   const handleAddToCart = () => {
     if (isOutOfStock) return;
+
     const data = {
-      productId: params.productId,
+      productId: Number(params.productId),
       size: selectedSize,
-      quantity: quantity,
+      quantity: 1, // Always add 1 item, user can increase quantity in cart
     };
-    console.log("cart data: ", data);
 
     dispatch(addItemToCart(data));
     navigate("/cart");
@@ -410,46 +395,17 @@ export const ProductDetails = () => {
                     </div>
                   </fieldset>
 
-                  {/* Quantity Display and Selector */}
+                  {/* Stock Availability Display */}
                   {selectedSize && (
                     <div className="mt-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-medium text-gray-900">
-                          Quantity
-                        </h3>
-                        {isOutOfStock ? (
-                          <span className="text-sm font-medium text-red-600">
-                            Out of Stock
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-600">
-                            {availableQuantity} available
-                          </span>
-                        )}
-                      </div>
-
-                      {!isOutOfStock && (
-                        <div className="flex items-center space-x-3">
-                          <button
-                            type="button"
-                            onClick={() => handleQuantityChange(-1)}
-                            disabled={quantity <= 1}
-                            className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span className="text-lg">−</span>
-                          </button>
-                          <span className="py-2 px-6 border border-gray-300 rounded-md text-gray-900 font-medium">
-                            {quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleQuantityChange(1)}
-                            disabled={quantity >= availableQuantity}
-                            className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span className="text-lg">+</span>
-                          </button>
-                        </div>
+                      {isOutOfStock ? (
+                        <span className="text-sm font-medium text-red-600">
+                          Out of Stock
+                        </span>
+                      ) : (
+                        <span className="text-sm text-gray-600">
+                          {availableQuantity} available in stock
+                        </span>
                       )}
                     </div>
                   )}

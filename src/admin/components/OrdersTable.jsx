@@ -45,7 +45,12 @@ const OrdersTable = () => {
   useEffect(() => {
     //@ts-ignore
     dispatch(getOrders());
-  }, [adminOrder.confirmed, adminOrder.shipped, adminOrder.delivered, adminOrder.deletedOrder]);
+  }, [
+    adminOrder.confirmed,
+    adminOrder.shipped,
+    adminOrder.delivered,
+    adminOrder.deletedOrder,
+  ]);
 
   console.log("admin orders: ", adminOrder);
 
@@ -111,7 +116,9 @@ const OrdersTable = () => {
                     ))}
                   </TableCell>
                   <TableCell align="left">{item.id}</TableCell>
-                  <TableCell align="left">{item.totalPrice}</TableCell>
+                  <TableCell align="left">
+                    {item.totalDiscountedPrice}
+                  </TableCell>
                   <TableCell align="left">
                     <span
                       className={`px-5 py-2 text-white rounded-full ${

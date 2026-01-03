@@ -14,6 +14,7 @@ import {
   UPDATE_CART_ITEM_FAILURE,
   UPDATE_CART_ITEM_REQUEST,
   UPDATE_CART_ITEM_SUCCESS,
+  CLEAR_CART,
 } from "./ActionType";
 
 export const getCart = () => async (dispatch) => {
@@ -31,7 +32,13 @@ export const getCart = () => async (dispatch) => {
 export const addItemToCart = (reqData) => async (dispatch) => {
   dispatch({ type: ADD_ITEM_TO_CART_REQUEST });
   try {
-    const { data } = await api.put("/api/cart/add", reqData);
+    const addData = {
+      productId: reqData.productId,
+      size: reqData.size,
+    };
+
+    // Add item to cart (always adds with quantity 1, user can update in cart)
+    const { data } = await api.put("/api/cart/add", addData);
     dispatch({ type: ADD_ITEM_TO_CART_SUCCESS, payload: data });
     toast.success("Item added to cart successfully");
   } catch (error) {
@@ -68,4 +75,8 @@ export const updateCartItem = (reqData) => async (dispatch) => {
     dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: error.message });
     toast.error(error.response?.data?.message || "Failed to update cart");
   }
+};
+
+export const clearCart = () => (dispatch) => {
+  dispatch({ type: CLEAR_CART });
 };

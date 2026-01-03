@@ -11,6 +11,7 @@ import {
   GET_USER_ORDERS_REQUEST,
   GET_USER_ORDERS_SUCCESS,
 } from "./ActionType";
+import { getCart, clearCart } from "../Cart/Action";
 
 export const createOrder = (reqData) => async (dispatch) => {
   dispatch({ type: CREATE_ORDER_REQUEST });
@@ -24,6 +25,13 @@ export const createOrder = (reqData) => async (dispatch) => {
     console.log("created order: ", data);
     dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
     toast.success("Order created successfully");
+
+    // Clear cart immediately after order creation
+    dispatch(clearCart());
+    // Wait a bit for backend to process, then refresh cart to ensure it's empty
+    setTimeout(() => {
+      dispatch(getCart());
+    }, 500);
   } catch (error) {
     dispatch({
       type: CREATE_ORDER_FAILURE,
