@@ -64,6 +64,14 @@ export default function Product() {
   const sortValue = searchParams.get("sort");
   const stock = searchParams.get("stock");
   const pageNumber = searchParams.get("pageNumber");
+  // Extract parentCategory from URL params (lavelOne = men/women/kids)
+  const parentCategory =
+    param.lavelOne &&
+    (param.lavelOne === "men" ||
+      param.lavelOne === "women" ||
+      param.lavelOne === "kids")
+      ? param.lavelOne
+      : null;
 
   const handlePaginationChange = (event, value) => {
     const searchParams = new URLSearchParams(location.search);
@@ -156,12 +164,14 @@ export default function Product() {
       pageNumber: pageNumber || 0,
       pageSize: 10,
       stock: stock || "",
+      parentCategory: parentCategory || undefined, // Include parentCategory if available
     };
 
     //@ts-ignore
     dispatch(findProducts(data));
   }, [
     param.lavelThree,
+    param.lavelOne,
     colorValue,
     sizeValue,
     priceValue,
@@ -169,6 +179,7 @@ export default function Product() {
     sortValue,
     stock,
     pageNumber,
+    parentCategory,
   ]);
 
   console.log("kjdf", products);

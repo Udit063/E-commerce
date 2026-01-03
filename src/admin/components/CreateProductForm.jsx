@@ -1,8 +1,18 @@
 //@ts-nocheck
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { Fragment, useState } from "react";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Fragment, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createProduct } from "../../store/Product/Action";
+import { navigation } from "../../customer/components/navigation/NavigationData";
 
 const initialSizes = [
   { name: "S", quantity: 0 },
@@ -31,10 +41,30 @@ const CreateProductForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setProductData((prevState) => {
+      const newState = {
+        ...prevState,
+        [name]: value,
+      };
+      // Reset third level category when top level category changes
+      if (name === "topLevelCategory") {
+        newState.thirdLevelCategory = "";
+      }
+      return newState;
+    });
+  };
+
+  // Get third level category options based on selected top level category
+  const getThirdLevelOptions = () => {
+    if (!productData.topLevelCategory) return [];
+    const category = navigation.categories.find(
+      (cat) => cat.id === productData.topLevelCategory
+    );
+    if (!category) return [];
+    const clothingSection = category.sections.find(
+      (sec) => sec.id === "clothing"
+    );
+    return clothingSection ? clothingSection.items : [];
   };
 
   const handleSizeChange = (e, index) => {
@@ -146,96 +176,96 @@ const CreateProductForm = () => {
               type="number"
             />
           </Grid>
-          <Grid item size={{xs: 6, sm: 4}}>
+          <Grid item size={{ xs: 6, sm: 4 }}>
             <FormControl fullWidth>
-                <InputLabel>Top Level Category</InputLabel>
-                <Select name="topLevelCategory" 
-                        value={productData.topLevelCategory}
-                        onChange={handleChange}
-                        label="Top Level Category"
-                        >
-                            <MenuItem value="men">Men</MenuItem>
-                            <MenuItem value="women">Women</MenuItem>
-                            <MenuItem value="kids">Kids</MenuItem>
-                        </Select>
-            </FormControl>
-          </Grid>
-          <Grid item size={{xs: 6, sm: 4}}>
-            <FormControl fullWidth>
-                <InputLabel>Second Level Category</InputLabel>
-                <Select name="secondLevelCategory" 
-                        value={productData.secondLevelCategory}
-                        onChange={handleChange}
-                        label="Second Level Category"
-                        >
-                            <MenuItem value="clothing">Clothing</MenuItem>
-                            <MenuItem value="accessories">Accessories</MenuItem>
-                            <MenuItem value="brands">Brands</MenuItem>
-                        </Select>
-            </FormControl>
-          </Grid>
-          <Grid item size={{xs: 6, sm: 4}}>
-            <FormControl fullWidth>
-                <InputLabel>Second Level Category</InputLabel>
-                <Select name="thirdLevelCategory" 
-                        value={productData.thirdLevelCategory}
-                        onChange={handleChange}
-                        label="Third Level Category"
-                        >
-                            <MenuItem value="top">Tops</MenuItem>
-                            <MenuItem value="women_dress">Dresses</MenuItem>
-                            <MenuItem value="t-shirts">T-Shirts</MenuItem>
-                            <MenuItem value="mens_kurta">Men's Kurta</MenuItem>
-                            <MenuItem value="saree">Saree</MenuItem>
-                            <MenuItem value="lehnga_choli">Lehnga Choli</MenuItem>
-                        </Select>
-            </FormControl>
-          </Grid>
-          <Grid item size={{xs:12}}>
-            <TextField
-                fullWidth
-                id="outlined-multiline-static"
-                label="Description"
-                multiline
-                name="description"
-                rows={3}
+              <InputLabel>Top Level Category</InputLabel>
+              <Select
+                name="topLevelCategory"
+                value={productData.topLevelCategory}
                 onChange={handleChange}
-                value={productData.description}
+                label="Top Level Category"
+              >
+                <MenuItem value="men">Men</MenuItem>
+                <MenuItem value="women">Women</MenuItem>
+                <MenuItem value="kids">Kids</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item size={{ xs: 6, sm: 4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Second Level Category</InputLabel>
+              <Select
+                name="secondLevelCategory"
+                value={productData.secondLevelCategory}
+                onChange={handleChange}
+                label="Second Level Category"
+              >
+                <MenuItem value="clothing">Clothing</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item size={{ xs: 6, sm: 4 }}>
+            <FormControl fullWidth disabled={!productData.topLevelCategory}>
+              <InputLabel>Third Level Category</InputLabel>
+              <Select
+                name="thirdLevelCategory"
+                value={productData.thirdLevelCategory}
+                onChange={handleChange}
+                label="Third Level Category"
+              >
+                {getThirdLevelOptions().map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item size={{ xs: 12 }}>
+            <TextField
+              fullWidth
+              id="outlined-multiline-static"
+              label="Description"
+              multiline
+              name="description"
+              rows={3}
+              onChange={handleChange}
+              value={productData.description}
             />
           </Grid>
-          {productData.size.map((size, index)=>(
+          {productData.size.map((size, index) => (
             <Grid container item spacing={3}>
-                <Grid item size={{xs: 12, sm:6}}>
-                    <TextField
-                        label="Size Name"
-                        name="size"
-                        value={size.name}
-                        onChange={(event)=>handleSizeChange(event, index)}
-                        required
-                        fullWidth
-                    />
-                </Grid>
-                <Grid item size={{xs: 12, sm:6}}>
-                    <TextField
-                        label="Quantity"
-                        name="size_quantity"
-                        type="number"
-                        onChange={(event)=>handleSizeChange(event, index)}
-                        required
-                        fullWidth
-                    />
-                </Grid>
+              <Grid item size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  label="Size Name"
+                  name="size"
+                  value={size.name}
+                  onChange={(event) => handleSizeChange(event, index)}
+                  required
+                  fullWidth
+                />
+              </Grid>
+              <Grid item size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  label="Quantity"
+                  name="size_quantity"
+                  type="number"
+                  onChange={(event) => handleSizeChange(event, index)}
+                  required
+                  fullWidth
+                />
+              </Grid>
             </Grid>
           ))}
-          <Grid item size={{xs :12}}>
-            <Button 
-                variant="contained"
-                sx={{p: 1.8}}
-                className="py-20"
-                size="large"
-                type="submit"
+          <Grid item size={{ xs: 12 }}>
+            <Button
+              variant="contained"
+              sx={{ p: 1.8 }}
+              className="py-20"
+              size="large"
+              type="submit"
             >
-                Add New Product
+              Add New Product
             </Button>
           </Grid>
         </Grid>

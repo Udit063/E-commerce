@@ -244,7 +244,7 @@ export default function Navigation() {
                     <img
                       src="https://tailwindui.com/img/flags/flag-canada.svg"
                       alt=""
-                      className="block h-auto w-5 flex-shrink-0"
+                      className="block h-auto w-5 flex-shrink-0 "
                     />
                     <span className="ml-3 block text-base font-medium text-gray-900">
                       CAD
