@@ -1,5 +1,5 @@
 import { Box, Modal, Typography } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
@@ -17,13 +17,27 @@ const style = {
 
 const AuthModal = ({ open, handleClose }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   // Show register form if on /register, otherwise show login form
   const isRegisterPage = location.pathname === "/register";
+
+  const handleModalClose = (event, reason) => {
+    // Close the modal
+    handleClose();
+    // Redirect to home page if clicking outside (backdrop) or pressing escape
+    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+      // Only redirect if we're on /login or /register routes
+      if (location.pathname === "/login" || location.pathname === "/register") {
+        navigate("/");
+      }
+    }
+  };
+
   return (
     <div>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={handleModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

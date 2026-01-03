@@ -191,14 +191,14 @@ export default function Product() {
         <Dialog
           open={mobileFiltersOpen}
           onClose={setMobileFiltersOpen}
-          className="relative z-40 lg:hidden"
+          className="relative z-[60] lg:hidden"
         >
           <DialogBackdrop
             transition
-            className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+            className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-closed:opacity-0 z-[60]"
           />
 
-          <div className="fixed inset-0 z-40 flex">
+          <div className="fixed inset-0 z-[60] flex">
             <DialogPanel
               transition
               className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white pt-4 pb-6 shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full"
@@ -337,7 +337,7 @@ export default function Product() {
         </Dialog>
 
         <main className="mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pt-8 pb-6">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
               New Arrivals
             </h1>
@@ -430,7 +430,7 @@ export default function Product() {
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
               {/* Filters */}
               <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-2">
-                <div className="py-10 flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
+                <div className="py-10 hidden lg:flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
                   <h1 className="text-lg opacity-50 font-bold">Filters</h1>
                   <FilterList />
                 </div>
