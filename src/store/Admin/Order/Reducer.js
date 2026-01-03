@@ -20,12 +20,18 @@ const {
   SHIP_ORDER_REQUEST,
   SHIP_ORDER_SUCCESS,
   SHIP_ORDER_FAILURE,
+  GET_ORDER_STATISTICS_REQUEST,
+  GET_ORDER_STATISTICS_SUCCESS,
+  GET_ORDER_STATISTICS_FAILURE,
 } = require("./ActionType");
 
 const initialState = {
   loading: false,
   orders: [],
   error: "",
+  statistics: null,
+  statisticsLoading: false,
+  statisticsError: null,
 };
 
 export const adminOrderReducer = (state = initialState, action) => {
@@ -37,12 +43,14 @@ export const adminOrderReducer = (state = initialState, action) => {
       };
     case GET_ORDERS_SUCCESS:
       return {
+        ...state,
         loading: false,
         orders: action.payload,
         error: "",
       };
     case GET_ORDERS_FAILURE:
       return {
+        ...state,
         loading: false,
         orders: [],
         error: action.payload,
@@ -114,6 +122,25 @@ export const adminOrderReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.payload,
+      };
+    case GET_ORDER_STATISTICS_REQUEST:
+      return {
+        ...state,
+        statisticsLoading: true,
+        statisticsError: null,
+      };
+    case GET_ORDER_STATISTICS_SUCCESS:
+      return {
+        ...state,
+        statisticsLoading: false,
+        statistics: action.payload,
+        statisticsError: null,
+      };
+    case GET_ORDER_STATISTICS_FAILURE:
+      return {
+        ...state,
+        statisticsLoading: false,
+        statisticsError: action.payload,
       };
     default:
       return state;

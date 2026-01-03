@@ -19,6 +19,9 @@ import {
   SHIP_ORDER_FAILURE,
   SHIP_ORDER_REQUEST,
   SHIP_ORDER_SUCCESS,
+  GET_ORDER_STATISTICS_REQUEST,
+  GET_ORDER_STATISTICS_SUCCESS,
+  GET_ORDER_STATISTICS_FAILURE,
 } from "./ActionType";
 
 export const getOrders = () => {
@@ -93,5 +96,20 @@ export const deleteOrder = (orderId) => async (dispatch) => {
   } catch (error) {
     dispatch({ type: DELETE_ORDER_FAILURE, payload: error.message });
     toast.error(error.response?.data?.message || "Failed to delete order");
+  }
+};
+
+export const getOrderStatistics = () => async (dispatch) => {
+  dispatch({ type: GET_ORDER_STATISTICS_REQUEST });
+  try {
+    const { data } = await api.get("/api/admin/orders/statistics");
+    dispatch({ type: GET_ORDER_STATISTICS_SUCCESS, payload: data });
+    return { success: true, data };
+  } catch (error) {
+    dispatch({ type: GET_ORDER_STATISTICS_FAILURE, payload: error.message });
+    toast.error(
+      error.response?.data?.message || "Failed to load order statistics"
+    );
+    return { success: false, error };
   }
 };

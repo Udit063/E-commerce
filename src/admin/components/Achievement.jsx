@@ -14,18 +14,37 @@ const TrophyImage = styled("img")({
   position: "absolute",
 });
 
-const Achievement = () => {
+const Achievement = ({ statistics, onViewSales }) => {
+  // Format revenue for display
+  const formatRevenue = (amount) => {
+    if (!amount && amount !== 0) return "0";
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(1)}K`;
+    }
+    return amount.toFixed(0);
+  };
+
+  const revenue = statistics?.totalRevenue;
+  const displayRevenue = revenue !== undefined ? formatRevenue(revenue) : "0";
+
   return (
-    <Card className="" sx={{ position: "relative"}}>
+    <Card className="" sx={{ position: "relative" }}>
       <CardContent>
         <Typography variant="h6" sx={{ letterSpacing: ".25px" }}>
           Shop with Olevra
         </Typography>
         <Typography variant="body2">Congratulations 🥳</Typography>
         <Typography variant="h5" sx={{ my: 3.1 }}>
-          420.8k 🥳
+          ₹{displayRevenue} 🥳
         </Typography>
-        <Button size="small" variant="contained">
+        <Button
+          size="small"
+          variant="contained"
+          onClick={onViewSales}
+          sx={{ bgcolor: "#9155fd" }}
+        >
           View Sales
         </Button>
         <TriangleImage src="" />
