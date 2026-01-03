@@ -64,7 +64,6 @@ export const updateCartItem = (reqData) => async (dispatch) => {
     console.log("cart123data: ", data);
 
     dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data });
-    toast.success("Cart updated successfully");
   } catch (error) {
     dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: error.message });
     toast.error(error.response?.data?.message || "Failed to update cart");

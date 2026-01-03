@@ -80,14 +80,84 @@ function classNames(...classes) {
 }
 
 export const ProductDetails = () => {
-  const [selectedSize, setSelectedSize] = useState("M");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
   const { products } = useSelector((store) => store);
 
+  // Sort sizes in standard order: S, M, L, XL, XXL, etc.
+  const sortSizes = (sizes) => {
+    if (!sizes || sizes.length === 0) return [];
+
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+    return [...sizes].sort((a, b) => {
+      const indexA = sizeOrder.indexOf(a.name.toUpperCase());
+      const indexB = sizeOrder.indexOf(b.name.toUpperCase());
+
+      // If both sizes are in the order array, sort by their position
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      // If only one is in the order array, prioritize it
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      // If neither is in the order array, sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  // Get sorted sizes
+  const sortedSizes = products.product?.sizes
+    ? sortSizes(products.product.sizes)
+    : [];
+
+  // Get available quantity for selected size
+  const getAvailableQuantity = () => {
+    if (!products.product?.sizes || !selectedSize) return 0;
+    const sizeObj = products.product.sizes.find((s) => s.name === selectedSize);
+    return sizeObj?.quantity || 0;
+  };
+
+  const availableQuantity = getAvailableQuantity();
+  const isOutOfStock = availableQuantity === 0;
+
+  // Reset quantity when size changes
+  useEffect(() => {
+    if (selectedSize) {
+      setQuantity(1);
+    }
+  }, [selectedSize]);
+
+  // Set initial size when product loads (select first available size)
+  useEffect(() => {
+    if (sortedSizes.length > 0 && !selectedSize) {
+      // Find first available size, or just use the first one
+      const firstAvailable =
+        sortedSizes.find((s) => s.quantity > 0) || sortedSizes[0];
+      if (firstAvailable) {
+        setSelectedSize(firstAvailable.name);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedSizes]);
+
+  const handleQuantityChange = (change) => {
+    const newQuantity = quantity + change;
+    if (newQuantity >= 1 && newQuantity <= availableQuantity) {
+      setQuantity(newQuantity);
+    }
+  };
+
   const handleAddToCart = () => {
-    const data = { productId: params.productId, size: selectedSize };
+    if (isOutOfStock) return;
+    const data = {
+      productId: params.productId,
+      size: selectedSize,
+      quantity: quantity,
+    };
     console.log("cart data: ", data);
 
     dispatch(addItemToCart(data));
@@ -294,45 +364,113 @@ export const ProductDetails = () => {
 
                   <fieldset aria-label="Choose a size" className="mt-4">
                     <div className="grid grid-cols-4 gap-3">
-                      {product.sizes.map((size) => (
-                        <label
-                          key={size.name}
-                          aria-label={size.name}
-                          className={`group relative flex items-center justify-center rounded-md border border-gray-300 bg-white p-3 has-checked:border-indigo-600 has-checked:bg-indigo-600 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 has-disabled:border-gray-400 has-disabled:bg-gray-200 has-disabled:opacity-25 cursor-pointer ${
-                            selectedSize === size.name
-                              ? "ring-2 ring-indigo-600"
-                              : ""
-                          }`}
-                        >
-                          <input
-                            value={size.name}
-                            checked={selectedSize === size.name}
-                            name="size"
-                            type="radio"
-                            onChange={() => setSelectedSize(size.name)}
-                            disabled={!size.inStock}
-                            className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
-                          />
-                          <span className="text-sm font-medium text-gray-900 uppercase group-has-checked:text-white">
-                            {size.name}
-                          </span>
-                        </label>
-                      ))}
+                      {sortedSizes.map((size) => {
+                        const sizeQuantity = size.quantity || 0;
+                        const isSizeOutOfStock = sizeQuantity === 0;
+                        const isSelected = selectedSize === size.name;
+
+                        return (
+                          <label
+                            key={size.name}
+                            aria-label={size.name}
+                            className={`group relative flex flex-col items-center justify-center rounded-md border p-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 cursor-pointer ${
+                              isSizeOutOfStock
+                                ? "border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed"
+                                : isSelected
+                                ? "ring-2 ring-indigo-600 border-indigo-600 bg-white"
+                                : "border-gray-300 bg-white hover:border-indigo-300"
+                            }`}
+                          >
+                            <input
+                              value={size.name}
+                              checked={isSelected}
+                              name="size"
+                              type="radio"
+                              onChange={() =>
+                                !isSizeOutOfStock && setSelectedSize(size.name)
+                              }
+                              disabled={isSizeOutOfStock}
+                              className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
+                            />
+                            <span
+                              className={`text-sm font-medium uppercase ${
+                                isSelected ? "text-indigo-600" : "text-gray-900"
+                              }`}
+                            >
+                              {size.name}
+                            </span>
+                            {isSizeOutOfStock && (
+                              <span className="text-xs text-red-600 mt-1">
+                                Out of Stock
+                              </span>
+                            )}
+                          </label>
+                        );
+                      })}
                     </div>
                   </fieldset>
+
+                  {/* Quantity Display and Selector */}
+                  {selectedSize && (
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-sm font-medium text-gray-900">
+                          Quantity
+                        </h3>
+                        {isOutOfStock ? (
+                          <span className="text-sm font-medium text-red-600">
+                            Out of Stock
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-600">
+                            {availableQuantity} available
+                          </span>
+                        )}
+                      </div>
+
+                      {!isOutOfStock && (
+                        <div className="flex items-center space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => handleQuantityChange(-1)}
+                            disabled={quantity <= 1}
+                            className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="text-lg">−</span>
+                          </button>
+                          <span className="py-2 px-6 border border-gray-300 rounded-md text-gray-900 font-medium">
+                            {quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleQuantityChange(1)}
+                            disabled={quantity >= availableQuantity}
+                            className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="text-lg">+</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <Button
                   onClick={handleAddToCart}
+                  disabled={isOutOfStock || !selectedSize}
                   variant="contained"
                   sx={{
                     px: "2rem",
                     py: "1rem",
                     my: "1rem",
                     bgcolor: "#9155fd",
+                    "&:disabled": {
+                      bgcolor: "#d1d5db",
+                      color: "#9ca3af",
+                    },
                   }}
                 >
-                  Add To Cart
+                  {isOutOfStock ? "Out of Stock" : "Add To Cart"}
                 </Button>
               </form>
             </div>
