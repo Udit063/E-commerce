@@ -11,10 +11,12 @@ import OrderDetails from "../customer/components/Order/OrderDetails";
 import HomePage from "../customer/pages/HomePage/HomePage";
 import PaymentSuccess from "../customer/components/Payment/PaymentSuccess";
 import RequireAuth from "./RequireAuth";
+import ScrollToTop from "../components/ScrollToTop";
 
 const CustomerRoutes = () => {
   return (
     <div>
+      <ScrollToTop />
       <div>
         <Navigation />
       </div>
