@@ -93,7 +93,7 @@ export const getProductsByCategory =
           colors: "",
           sizes: "",
           minPrice: 0,
-          maxPrice: 10000,
+          maxPrice: 10000000,
           minDiscount: 0,
           category: categoryName,
           stock: "",
