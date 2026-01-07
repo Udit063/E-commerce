@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -35,6 +35,7 @@ import { FilterList } from "@mui/icons-material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../../store/Product/Action";
+import PriceRangeFilter from "./PriceRangeFilter";
 
 const sortOptions = [
   { name: "Price: Low to High", value: "price_low" },
@@ -64,6 +65,11 @@ export default function Product() {
   const sortValue = searchParams.get("sort");
   const stock = searchParams.get("stock");
   const pageNumber = searchParams.get("pageNumber");
+
+  const [initialMinPrice, initialMaxPrice] = priceValue
+    ? priceValue.split("-").map(Number)
+    : [0, 10000000];
+
   // Extract parentCategory from URL params (lavelOne = men/women/kids)
   const parentCategory =
     param.lavelOne &&
@@ -149,9 +155,26 @@ export default function Product() {
     navigate({ search: `?${query}` });
   };
 
+  const handlePriceApply = (minPrice, maxPrice) => {
+    const searchParams = new URLSearchParams(location.search);
+
+    // Only set price if not default range
+    if (minPrice === 0 && maxPrice === 10000) {
+      searchParams.delete("price");
+    } else {
+      searchParams.set("price", `${minPrice}-${maxPrice}`);
+    }
+
+    // Reset to first page when filters change
+    searchParams.set("pageNumber", "0");
+
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  };
+
   useEffect(() => {
     const [minPrice, maxPrice] =
-      priceValue === null ? [0, 10000] : priceValue.split("-").map(Number);
+      priceValue === null ? [0, 10000000] : priceValue.split("-").map(Number);
 
     const data = {
       category: param.lavelThree || "",
@@ -218,6 +241,35 @@ export default function Product() {
 
               {/* Filters */}
               <form className="mt-4 border-t border-gray-200">
+                <Disclosure
+                  as="div"
+                  className="border-b border-gray-200 px-4 py-6"
+                >
+                  <h3 className="-mx-2 -my-3 flow-root">
+                    <DisclosureButton className="group flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                      <span className="font-medium text-gray-900">
+                        Price Range
+                      </span>
+                      <span className="ml-6 flex items-center">
+                        <PlusIcon
+                          aria-hidden="true"
+                          className="size-5 group-data-[open]:hidden"
+                        />
+                        <MinusIcon
+                          aria-hidden="true"
+                          className="size-5 opacity-0 group-data-[open]:opacity-100"
+                        />
+                      </span>
+                    </DisclosureButton>
+                  </h3>
+                  <DisclosurePanel className="pt-6">
+                    <PriceRangeFilter
+                      onApply={handlePriceApply}
+                      initialMin={initialMinPrice}
+                      initialMax={initialMaxPrice}
+                    />
+                  </DisclosurePanel>
+                </Disclosure>
                 {filters.map((section) => (
                   <Disclosure
                     key={section.id}
@@ -429,12 +481,42 @@ export default function Product() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
               {/* Filters */}
-              <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-2">
+              <div className="lg:sticky lg:top-10 lg:h-[calc(100vh-8rem)] overflow-x-hidden lg:overflow-y-auto lg:pr-2">
                 <div className="py-10 hidden lg:flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
                   <h1 className="text-lg opacity-50 font-bold">Filters</h1>
                   <FilterList />
                 </div>
                 <form className="hidden lg:block pb-4">
+                  <Disclosure
+                    as="div"
+                    className="border-b border-gray-200 py-6"
+                    defaultOpen
+                  >
+                    <h3 className="-my-3 flow-root">
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                        <span className="font-medium text-gray-900">
+                          Price Range
+                        </span>
+                        <span className="ml-6 flex items-center relative">
+                          <PlusIcon
+                            aria-hidden="true"
+                            className="size-5 transition-opacity duration-200 group-data-[open]:opacity-0 group-data-[open]:pointer-events-none"
+                          />
+                          <MinusIcon
+                            aria-hidden="true"
+                            className="size-5 absolute opacity-0 transition-opacity duration-200 group-data-[open]:opacity-100 group-data-[open]:pointer-events-auto"
+                          />
+                        </span>
+                      </DisclosureButton>
+                    </h3>
+                    <DisclosurePanel className="pt-6 pl-3 pr-1">
+                      <PriceRangeFilter
+                        onApply={handlePriceApply}
+                        initialMin={initialMinPrice}
+                        initialMax={initialMaxPrice}
+                      />
+                    </DisclosurePanel>
+                  </Disclosure>
                   {filters.map((section) => (
                     <Disclosure
                       key={section.id}

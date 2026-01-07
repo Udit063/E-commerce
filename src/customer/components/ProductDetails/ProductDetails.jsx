@@ -282,7 +282,7 @@ export const ProductDetails = () => {
               />
             </div>
             <div className="flex flex-wrap space-x-5 justify-center">
-              {product.images.slice(1).map((item, index) => (
+              {/* {product.images.slice(1).map((item, index) => (
                 <div
                   key={index}
                   className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg max-w-[5rem] max-h-[5rem] mt-4"
@@ -293,7 +293,7 @@ export const ProductDetails = () => {
                     className="col-start-2 aspect-3/2 size-full rounded-lg object-cover max-lg:hidden"
                   />
                 </div>
-              ))}
+              ))} */}
             </div>
           </div>
           {/* Product info */}
