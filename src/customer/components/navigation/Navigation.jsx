@@ -75,8 +75,6 @@ export default function Navigation() {
     }
   }, [auth.user, handleClose, location.pathname, navigate]);
 
-  console.log("jkdvnvd", auth);
-
   return (
     <div className="bg-white pb-10">
       {/* Mobile menu */}
@@ -276,7 +274,10 @@ export default function Navigation() {
               </button>
 
               {/* Logo */}
-              <div className="ml-4 flex lg:ml-0" onClick={() => navigate("/")}>
+              <div
+                className="ml-4 flex lg:ml-0 cursor-pointer"
+                onClick={() => navigate("/")}
+              >
                 <span className="sr-only">Your Company</span>
                 <img
                   src="https://res.cloudinary.com/ddkso1wxi/image/upload/v1675919455/Logo/Copy_of_Zosh_Academy_nblljp.png"
