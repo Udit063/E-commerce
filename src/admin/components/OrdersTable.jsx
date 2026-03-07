@@ -30,6 +30,10 @@ const OrdersTable = () => {
   const { adminOrder } = useSelector((store) => store);
   const [anchorEl, setAnchorEl] = useState([]);
   const open = Boolean(anchorEl);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 10;
 
   const handleClick = (event, index) => {
     const newAnchorElArray = [...anchorEl];
@@ -43,6 +47,8 @@ const OrdersTable = () => {
   };
 
   useEffect(() => {
+    // Reset to first page whenever orders are re-fetched due to a status change or delete
+    setPage(0);
     //@ts-ignore
     dispatch(getOrders());
   }, [
@@ -53,6 +59,34 @@ const OrdersTable = () => {
   ]);
 
   console.log("admin orders: ", adminOrder);
+
+  // Slice orders into pages for client-side infinite scrolling
+  useEffect(() => {
+    const allOrders = adminOrder.orders || [];
+    const sliceEnd = (page + 1) * PAGE_SIZE;
+    setRows(allOrders.slice(0, sliceEnd));
+    setHasMore(sliceEnd < allOrders.length);
+  }, [adminOrder.orders, page]);
+
+  // Infinite scroll on the main admin scroll container: load next page near bottom
+  useEffect(() => {
+    const container = document.querySelector(".admin-main-scroll");
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (!hasMore || adminOrder.loading) return;
+
+      const { scrollTop, clientHeight, scrollHeight } = container;
+      const threshold = 100; // px from bottom
+
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [hasMore, adminOrder.loading]);
 
   const handleShippedOrder = (orderId, index) => {
     //@ts-ignore
@@ -95,7 +129,7 @@ const OrdersTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {adminOrder.orders?.map((item, index) => (
+              {rows.map((item, index) => (
                 <TableRow
                   key={item.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

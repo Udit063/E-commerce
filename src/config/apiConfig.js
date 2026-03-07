@@ -21,7 +21,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Optional: Add response interceptor for handling auth errors
@@ -35,5 +35,5 @@ api.interceptors.response.use(
       // window.location.href = '/login';
     }
     return Promise.reject(error);
-  }
+  },
 );
