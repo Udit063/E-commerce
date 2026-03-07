@@ -29,6 +29,10 @@ const CustomersTable = () => {
   const { auth } = useSelector((store) => store);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 10;
 
   const currentUserId = auth.user?.id;
 
@@ -36,6 +40,34 @@ const CustomersTable = () => {
     //@ts-ignore
     dispatch(getUsers());
   }, [adminUser.deletedUser, dispatch]);
+
+  // Slice users into pages for client-side infinite scrolling
+  useEffect(() => {
+    const allUsers = adminUser.users || [];
+    const sliceEnd = (page + 1) * PAGE_SIZE;
+    setRows(allUsers.slice(0, sliceEnd));
+    setHasMore(sliceEnd < allUsers.length);
+  }, [adminUser.users, page]);
+
+  // Infinite scroll on the main admin scroll container: load next page near bottom
+  useEffect(() => {
+    const container = document.querySelector(".admin-main-scroll");
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (!hasMore || adminUser.loading) return;
+
+      const { scrollTop, clientHeight, scrollHeight } = container;
+      const threshold = 100; // px from bottom
+
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [hasMore, adminUser.loading]);
 
   const handleDeleteClick = (userId, userName) => {
     setUserToDelete({ id: userId, name: userName });
@@ -92,7 +124,7 @@ const CustomersTable = () => {
                   </TableCell>
                 </TableRow>
               ) : adminUser.users?.length > 0 ? (
-                adminUser.users.map((user) => {
+                rows.map((user) => {
                   const canModify = canModifyUser(user);
                   return (
                     <TableRow
