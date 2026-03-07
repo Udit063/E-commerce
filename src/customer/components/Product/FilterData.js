@@ -16,11 +16,18 @@ export const filters = [
     options: [
       { value: "white", label: "White" },
       { value: "beige", label: "Beige" },
+      { value: "black", label: "Black" },
       { value: "blue", label: "Blue" },
+      { value: "navy", label: "Navy" },
       { value: "brown", label: "Brown" },
+      { value: "gray", label: "Gray" },
       { value: "green", label: "Green" },
+      { value: "olive", label: "Olive" },
       { value: "purple", label: "Purple" },
+      { value: "red", label: "Red" },
+      { value: "pink", label: "Pink" },
       { value: "yellow", label: "Yellow" },
+      { value: "orange", label: "Orange" },
     ],
   },
   {
