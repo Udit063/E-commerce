@@ -259,6 +259,7 @@ const Admin = () => {
       </Box>
       <Box
         component="main"
+        className="admin-main-scroll"
         sx={{
           flexGrow: 1,
           p: 3,

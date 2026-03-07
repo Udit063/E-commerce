@@ -26,6 +26,9 @@ const ProductsTable = () => {
   const { products } = useSelector((store) => store);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
 
   console.log("products", products);
 
@@ -48,6 +51,7 @@ const ProductsTable = () => {
     setProductToDelete(null);
   };
 
+  // Fetch a page of products whenever page changes
   useEffect(() => {
     const data = {
       category: "",
@@ -57,14 +61,62 @@ const ProductsTable = () => {
       maxPrice: 1000000,
       minDiscount: 0,
       sort: "price_low",
-      pageNumber: 0,
+      pageNumber: page,
       pageSize: 10,
       stock: "",
     };
 
     //@ts-ignore
     dispatch(findProducts(data));
+  }, [page, dispatch]);
+
+  // Append newly loaded page to local rows (or reset when page = 0)
+  useEffect(() => {
+    const pageData = products.products?.content || [];
+    const totalPages = products.products?.totalPages ?? 0;
+
+    if (page === 0) {
+      setRows(pageData);
+    } else if (pageData.length) {
+      setRows((prev) => [...prev, ...pageData]);
+    }
+
+    if (totalPages) {
+      setHasMore(page + 1 < totalPages);
+    } else if (!pageData.length) {
+      setHasMore(false);
+    }
+  }, [products.products, page]);
+
+  // After a delete, reset to the first page
+  useEffect(() => {
+    if (products.deletedProduct) {
+      setPage(0);
+      setRows([]);
+      setHasMore(true);
+    }
   }, [products.deletedProduct]);
+
+  // Infinite scroll on the main admin scroll container: load next page near bottom
+  useEffect(() => {
+    const container = document.querySelector(".admin-main-scroll");
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (!hasMore || products.loading) return;
+
+      const { scrollTop, clientHeight, scrollHeight } = container;
+      const threshold = 100; // px from bottom
+
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [hasMore, products.loading]);
+
   return (
     <div className="p-5">
       <Card className="mt-2">
@@ -82,7 +134,7 @@ const ProductsTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.products?.content?.map((item) => (
+              {rows.map((item) => (
                 <TableRow
                   key={item.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
