@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Cart from "../customer/components/Cart/Cart";
 import Navigation from "../customer/components/navigation/Navigation";
 import Footer from "../customer/components/Footer/Footer";
@@ -12,10 +12,14 @@ import HomePage from "../customer/pages/HomePage/HomePage";
 import PaymentSuccess from "../customer/components/Payment/PaymentSuccess";
 import RequireAuth from "./RequireAuth";
 import ScrollToTop from "../components/ScrollToTop";
+import BackendNotice from "../customer/components/BackendNotice/BackendNotice";
 
 const CustomerRoutes = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
   return (
-    <div>ī
+    <div>
       <ScrollToTop />
       <div>
         <Navigation />
@@ -74,6 +78,7 @@ const CustomerRoutes = () => {
       <div>
         <Footer />
       </div>
+      {isHomePage && <BackendNotice />}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// export const API_BASE_URL = "http://localhost:8080";
-export const API_BASE_URL = "https://e-commerce-backend-2jia.onrender.com";
+export const API_BASE_URL = "http://localhost:8080";
+// export const API_BASE_URL = "https://e-commerce-backend-2jia.onrender.com";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -21,7 +21,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Optional: Add response interceptor for handling auth errors
@@ -35,5 +35,5 @@ api.interceptors.response.use(
       // window.location.href = '/login';
     }
     return Promise.reject(error);
-  }
+  },
 );
